@@ -148,7 +148,7 @@ export default function LoginPage() {
               left: 0,
               width: "100%",
               height: "100%",
-              backgroundColor: "rgba(53, 44, 44, 0.46)", // Light mask
+              backgroundColor: "rgba(53, 44, 44, 0.17)", // Light mask
               zIndex: 2,
             }}
           />
@@ -171,7 +171,7 @@ export default function LoginPage() {
               src={logo}
               alt="Namami Infotech Logo"
               width={40}
-              height={40}
+              height={60}
               style={{ marginBottom: 5 }}
             />
             <Typography
@@ -179,42 +179,12 @@ export default function LoginPage() {
               fontWeight="bold"
               sx={{ lineHeight: 1.2 }}
             >
-              Lakshay Institute of Technology
+              SANCHAR
             </Typography>
           </Box>
 
           {/* Centered paragraph */}
-          {!isMobile && 
-           <Box
-            sx={{
-              position: "relative",
-              zIndex: 3,
-              
-              padding: "0 20px",
-              color: "#fff",
-            }}
-          >
-            <Typography
-              variant="h5"
-              sx={{ maxWidth: "600px", margin: "0 auto" }}
-            >
-              Lakshya Institute of Technology (LIT), Bhubaneswar: A Vision for
-              IT Excellence
-            </Typography>
-            <br/>
-            <Typography
-              variant="body1"
-              sx={{ maxWidth: "600px", margin: "0 auto" }}
-            >
-              Lakshya Institute of Technology (LIT), Bhubaneswar, was founded in
-              2016 by Prof. Susant K. Rout with the vision of bridging the gap
-              between academic education and IT industry demands. Recognizing
-              Odisha’s growing potential in technology, LIT is committed to
-              producing skilled professionals through practical,
-              industry-oriented training.
-            </Typography>
-          </Box>
-          }
+          
          
         </Grid>
 
@@ -245,11 +215,11 @@ export default function LoginPage() {
               src={logo}
               alt="Namami Infotech Logo"
               width={120}
-              height={120}
+              height={180}
               style={{ marginBottom: 10 }}
             />
             <Typography variant="h5" style={{ color: "black" }}>
-              WELCOME TO LIT
+              WELCOME TO SANCHAR
             </Typography>
             {error && <Typography color="error">{error}</Typography>}
             <form
