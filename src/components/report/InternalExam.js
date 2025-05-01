@@ -54,7 +54,7 @@ function InternalExam() {
         formData.append('file', file);
 
         try {
-            const res = await fetch('https://namami-infotech.com/LIT/src/report/add_internal_exam_marks.php', {
+            const res = await fetch('https://namami-infotech.com/SANCHAR/src/report/add_internal_exam_marks.php', {
                 method: 'POST',
                 body: formData,
             });

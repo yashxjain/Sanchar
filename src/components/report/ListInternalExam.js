@@ -29,7 +29,7 @@ function ListInternalExam({ setView }) {
     const fetchRecords = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get('https://namami-infotech.com/LIT/src/report/list_internal_exam.php', {
+            const { data } = await axios.get('https://namami-infotech.com/SANCHAR/src/report/list_internal_exam.php', {
                 params: { Course: course, Sem: sem, Subject: subject }
             });
             if (data.success) setRecords(data.data);

@@ -36,14 +36,14 @@ const StudentFeesTransaction = () => {
   const fetchStudentAndFees = async () => {
     try {
       const studentRes = await axios.get(
-        `https://namami-infotech.com/LIT/src/students/get_student_id.php?StudentId=${studentId}`,
+        `https://namami-infotech.com/SANCHAR/src/students/get_student_id.php?StudentId=${studentId}`,
       );
       if (studentRes.data.success && studentRes.data.data) {
         setStudentData(studentRes.data.data);
       }
 
       const feesRes = await axios.get(
-        `https://namami-infotech.com/LIT/src/fees/get_student_fee_structure.php?StudentId=${studentId}`,
+        `https://namami-infotech.com/SANCHAR/src/fees/get_student_fee_structure.php?StudentId=${studentId}`,
       );
       if (feesRes.data.success && feesRes.data.data) {
         setFeesData(feesRes.data.data);
@@ -58,7 +58,7 @@ const StudentFeesTransaction = () => {
   const fetchTransactionData = async (transactionId) => {
     try {
       const res = await axios.get(
-        `https://namami-infotech.com/LIT/src/fees/get_fee_transaction.php?id=${transactionId}`,
+        `https://namami-infotech.com/SANCHAR/src/fees/get_fee_transaction.php?id=${transactionId}`,
       );
       if (res.data.success && res.data.data) {
         setTransactionData(res.data.data);

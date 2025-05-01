@@ -32,7 +32,7 @@ function AddPolicyDialog({ open, onClose, onPolicyAdded }) {
 
         try {
             const response = await axios.post(
-                'https://namami-infotech.com/LIT/src/policy/add_policy.php',
+                'https://namami-infotech.com/SANCHAR/src/policy/add_policy.php',
                 {
                     subject: policyName, // Send as 'subject'
                     body: policyDescription, // Send as 'body'

@@ -31,7 +31,7 @@ const StructureList = () => {
   const fetchFeeStructures = async () => {
     try {
       const response = await axios.get(
-        "https://namami-infotech.com/LIT/src/fees/get_fee_structure.php",
+        "https://namami-infotech.com/SANCHAR/src/fees/get_fee_structure.php",
       );
       if (response.data.success) {
         setStructures(response.data.data);

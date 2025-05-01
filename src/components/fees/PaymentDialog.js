@@ -56,7 +56,7 @@ const PaymentDialog = ({ open, onClose, feeData, student  }) => {
 };
 
       const res = await axios.post(
-        "https://namami-infotech.com/LIT/src/fees/add_fee_transaction.php",
+        "https://namami-infotech.com/SANCHAR/src/fees/add_fee_transaction.php",
         payload
       );
 

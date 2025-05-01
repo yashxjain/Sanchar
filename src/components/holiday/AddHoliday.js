@@ -38,7 +38,7 @@ function AddHoliday({ open, onClose, onHolidayAdded }) {
                 holidays
             };
 
-            const response = await axios.post('https://namami-infotech.com/LIT/src/holiday/add_holiday.php', payload);
+            const response = await axios.post('https://namami-infotech.com/SANCHAR/src/holiday/add_holiday.php', payload);
 
             if (response.data.success) {
                 onHolidayAdded();

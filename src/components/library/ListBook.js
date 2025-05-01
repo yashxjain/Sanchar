@@ -26,7 +26,7 @@ function ListBook({ setView, defaultStatusFilter = '' }) {
 
     const fetchBooks = async () => {
         try {
-            const response = await axios.get('https://namami-infotech.com/LIT/src/library/list_book.php');
+            const response = await axios.get('https://namami-infotech.com/SANCHAR/src/library/list_book.php');
             if (response.data.success) {
                 setBooks(response.data.data);
                 

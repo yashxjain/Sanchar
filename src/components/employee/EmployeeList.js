@@ -73,7 +73,7 @@ function EmployeeList() {
 
     const fetchEmployees = async () => {
         try {
-            const response = await axios.get(`https://namami-infotech.com/LIT/src/employee/list_employee.php?Tenent_Id=${user.tenent_id}`);
+            const response = await axios.get(`https://namami-infotech.com/SANCHAR/src/employee/list_employee.php?Tenent_Id=${user.tenent_id}`);
             console.log('Employees response:', response.data); // Debugging line
             if (response.data.success) {
                 setEmployees(response.data.data);
@@ -87,7 +87,7 @@ function EmployeeList() {
 
     const fetchOffices = async () => {
         try {
-            const response = await axios.get('https://namami-infotech.com/LIT/src/employee/get_office.php');
+            const response = await axios.get('https://namami-infotech.com/SANCHAR/src/employee/get_office.php');
             console.log('Offices response:', response.data); // Debugging line
             if (response.data.success) {
                 setOffices(response.data.data);
@@ -209,8 +209,8 @@ function EmployeeList() {
         console.log('Formatted Form Data:', formattedFormData); // Log formatted data
 
         const url = formMode === 'add'
-            ? 'https://namami-infotech.com/LIT/src/employee/add_employee.php'
-            : 'https://namami-infotech.com/LIT/src/employee/edit_employee.php';
+            ? 'https://namami-infotech.com/SANCHAR/src/employee/add_employee.php'
+            : 'https://namami-infotech.com/SANCHAR/src/employee/edit_employee.php';
 
         try {
             const response = await axios.post(url, formattedFormData);
@@ -263,7 +263,7 @@ function EmployeeList() {
 
     try {
         const action = employee.IsActive ? 'disable' : 'enable';
-        const response = await axios.post('https://namami-infotech.com/LIT/src/employee/disable_employee.php', {
+        const response = await axios.post('https://namami-infotech.com/SANCHAR/src/employee/disable_employee.php', {
             EmpId: employee.EmpId,
             action: action
         });

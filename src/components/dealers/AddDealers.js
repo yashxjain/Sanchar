@@ -22,7 +22,7 @@ function AddDealers({ open, onClose, onDealerAdded }) {
 
     const handleSubmit = async () => {
         try {
-            const response = await axios.post('https://namami-infotech.com/LIT/src/dealer/add_dealers.php', {
+            const response = await axios.post('https://namami-infotech.com/SANCHAR/src/dealer/add_dealers.php', {
                 dealerName,
                 address,
                 contactInfo,

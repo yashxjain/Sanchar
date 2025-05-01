@@ -31,12 +31,12 @@ const FeesPaymentList = () => {
 
     const fetchLibraryTransactions = async () => {
         try {
-            const response = await axios.get('https://namami-infotech.com/LIT/src/students/get_student.php');
+            const response = await axios.get('https://namami-infotech.com/SANCHAR/src/students/get_student.php');
             if (response.data.success) {
                 const students = response.data.data;
                 const enriched = await Promise.all(students.map(async student => {
                     try {
-                        const feeRes = await axios.get(`https://namami-infotech.com/LIT/src/fees/get_student_fee_structure.php?StudentId=${student.StudentID}`);
+                        const feeRes = await axios.get(`https://namami-infotech.com/SANCHAR/src/fees/get_student_fee_structure.php?StudentId=${student.StudentID}`);
                         if (feeRes.data.success) {
                             const structure = feeRes.data.data;
 

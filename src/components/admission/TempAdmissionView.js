@@ -42,10 +42,10 @@ function TempAdmissionView() {
       try {
         const [detailsRes, checkpointsRes] = await Promise.all([
           axios.get(
-            `https://namami-infotech.com/LIT/src/menu/get_transaction_dtl.php?activityId=${encodeURIComponent(activityId)}`,
+            `https://namami-infotech.com/SANCHAR/src/menu/get_transaction_dtl.php?activityId=${encodeURIComponent(activityId)}`,
           ),
           axios.get(
-            `https://namami-infotech.com/LIT/src/menu/get_checkpoints.php`,
+            `https://namami-infotech.com/SANCHAR/src/menu/get_checkpoints.php`,
           ),
         ]);
 
@@ -130,7 +130,7 @@ function TempAdmissionView() {
 
   try {
     const response = await axios.post(
-      "https://namami-infotech.com/LIT/src/students/add_student.php",
+      "https://namami-infotech.com/SANCHAR/src/students/add_student.php",
       studentData,
       {
         headers: {

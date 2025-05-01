@@ -15,6 +15,7 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
+  Paper,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,7 +26,7 @@ import banner from "../assets/about-image.png";
 import playstore from "../assets/playstore.png";
 import appstore from "../assets/appstore.png";
 
-const API_URL = "https://namami-infotech.com/LIT/src/auth";
+const API_URL = "https://namami-infotech.com/SANCHAR/src/auth";
 
 export default function LoginPage() {
   const [empId, setEmpId] = useState("");
@@ -95,253 +96,131 @@ export default function LoginPage() {
   };
 
   return (
-    <Container
-      maxWidth={false}
-      style={{
-        padding: 0,
-        margin: 0,
-        width: "100%",
-        height: isMobile ? "auto" : "100vh", // Allow scrolling on mobile
-        overflow: "hidden",
-      }}
-    >
-      <Grid
-        container
-        alignItems="center"
-        justifyContent="center"
-        style={{ height: isMobile ? "auto" : "100vh", width: "100%" }} // Allow scrolling on mobile
+  <Container
+  maxWidth={false}
+  disableGutters
+  sx={{
+    width: '100vw',
+    height: '100vh',
+    backgroundImage: `url(${banner})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  }}
+>
+  {/* Centered Login Box with semi-transparent background */}
+  <Paper
+    elevation={10}
+    sx={{
+      width: { xs: '90%', sm: '400px' },
+      padding: 4,
+      borderRadius: 3,
+      backgroundColor: 'rgba(255, 255, 255, 0.85)', // Semi-transparent white
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      mt: 20,
+      mr:40
+    }}
+  >
+   {/* <img
+  src={logo}
+  alt="Logo"
+  style={{
+    position: 'absolute',
+    top: 80,
+    left: 180,
+    
+    zIndex: 1000,
+  }}
+/> */}
+ <img
+      src={logo}
+      alt="Logo"
+      
+      
+    />
+    <Typography variant="h5" sx={{ color: 'black', mb: 2 }}>
+      WELCOME TO SANCHAR
+    </Typography>
+    {error && <Typography color="error">{error}</Typography>}
+    <form onSubmit={handleLogin} style={{ width: '100%' }}>
+      <TextField
+        fullWidth
+        label="Username"
+        variant="outlined"
+        margin="normal"
+        value={empId}
+        onChange={(e) => setEmpId(e.target.value)}
+      />
+      <TextField
+        fullWidth
+        label="Password"
+        type={showPassword ? 'text' : 'password'}
+        variant="outlined"
+        margin="normal"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        InputProps={{
+          endAdornment: (
+            <IconButton onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          ),
+        }}
+      />
+      <Button
+        fullWidth
+        variant="contained"
+        type="submit"
+        disabled={loading}
+        sx={{ mt: 2, backgroundColor: '#CC7A00', color: 'white' }}
       >
-        <Grid
-          item
-          xs={12}
-          md={7.5}
-          style={{
-            position: "relative",
-            background: "linear-gradient(to top, #1B3156, #1B3156)",
-            height: isMobile ? "40vh" : "100vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            overflow: "hidden",
-          }}
-        >
-          {/* Banner Image */}
-          <img
-            src={banner}
-            alt="Banner"
-            style={{
-              width: isMobile ? "100%" : "100%",
-              height: "100%",
-              objectFit: "cover",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              zIndex: 1,
-            }}
-          />
+        {loading ? 'Logging in...' : 'Login'}
+      </Button>
+    </form>
+    <Button onClick={() => setOpenDialog(true)} sx={{ mt: 1 }}>
+      Forgot Password?
+    </Button>
+    {/* <Box display="flex" justifyContent="center" mt={3}>
+      <Link to="https://play.google.com/store/apps/details?id=com.nanami.hrsmile" target="_blank">
+        <img src={playstore} alt="Google Play Store" width={140} style={{ marginRight: 10 }} />
+      </Link>
+      
+    </Box> */}
+  </Paper>
 
-          {/* Light Overlay Mask */}
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundColor: "rgba(53, 44, 44, 0.17)", // Light mask
-              zIndex: 2,
-            }}
-          />
+  {/* Forgot Password Dialog */}
+  <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+    <DialogTitle>Forgot Password</DialogTitle>
+    <DialogContent>
+      <Typography>
+        Enter your email address and we'll send you a new password.
+      </Typography>
+      {forgotPasswordError && <Typography color="error">{forgotPasswordError}</Typography>}
+      {forgotPasswordSuccess && <Typography color="success">{forgotPasswordSuccess}</Typography>}
+      <TextField
+        fullWidth
+        label="Email"
+        variant="outlined"
+        margin="normal"
+        value={forgotEmail}
+        onChange={(e) => setForgotEmail(e.target.value)}
+      />
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => setOpenDialog(false)} color="secondary">
+        Cancel
+      </Button>
+      <Button onClick={handleForgotPassword} color="primary" disabled={loading}>
+        {loading ? 'Submitting...' : 'Submit'}
+      </Button>
+    </DialogActions>
+  </Dialog>
+</Container>
 
-          {/* Text Overlay */}
-          {/* Top-left heading */}
-          <Box
-            sx={{
-              position: "absolute",
-              top: 30,
-              left: 30,
-              zIndex: 3,
-              color: "#fff",
-              display: "flex",
-              alignItems: "center",
-              gap: "15px",
-            }}
-          >
-            <img
-              src={logo}
-              alt="Namami Infotech Logo"
-              width={40}
-              height={60}
-              style={{ marginBottom: 5 }}
-            />
-            <Typography
-              variant={isMobile ? "h6" : "h5"}
-              fontWeight="bold"
-              sx={{ lineHeight: 1.2 }}
-            >
-              SANCHAR
-            </Typography>
-          </Box>
-
-          {/* Centered paragraph */}
-          
-         
-        </Grid>
-
-        {/* Right Side (30% of the screen) */}
-        <Grid
-          item
-          xs={12}
-          md={4.5} // 30% of the screen
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: isMobile ? "auto" : "100vh", // Allow scrolling on mobile
-            padding: isMobile ? "20px 0" : 0, // Add padding on mobile
-          }}
-        >
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            style={{
-              padding: 20,
-              maxWidth: "350px",
-              width: "100%",
-            }}
-          >
-            <img
-              src={logo}
-              alt="Namami Infotech Logo"
-              width={120}
-              height={180}
-              style={{ marginBottom: 10 }}
-            />
-            <Typography variant="h5" style={{ color: "black" }}>
-              WELCOME TO SANCHAR
-            </Typography>
-            {error && <Typography color="error">{error}</Typography>}
-            <form
-              onSubmit={handleLogin}
-              style={{
-                width: "100%",
-                marginTop: 20,
-              }}
-            >
-              <TextField
-                fullWidth
-                label="Username"
-                variant="outlined"
-                margin="normal"
-                value={empId}
-                onChange={(e) => setEmpId(e.target.value)}
-              />
-              <TextField
-                fullWidth
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                variant="outlined"
-                margin="normal"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton onClick={() => setShowPassword(!showPassword)}>
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  ),
-                }}
-              />
-              <Button
-                fullWidth
-                variant="contained"
-                type="submit"
-                disabled={loading}
-                style={{
-                  marginTop: 20,
-                  backgroundColor: "#CC7A00",
-                  color: "white",
-                }}
-              >
-                {loading ? "Logging in..." : "Login"}
-              </Button>
-            </form>
-            <Button
-              onClick={() => setOpenDialog(true)}
-              style={{ marginTop: 10 }}
-            >
-              Forgot Password?
-            </Button>
-            <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent="center"
-              alignItems="center"
-              mt={3}
-            >
-              <Link
-                to="https://play.google.com/store/apps/details?id=com.nanami.hrsmile"
-                target="_blank"
-              >
-                <img
-                  src={playstore}
-                  alt="Google Play Store"
-                  width={140}
-                  style={{ marginRight: 10, cursor: "pointer" }}
-                />
-              </Link>
-              <Link
-                to="https://apps.apple.com/in/app/hr-smile/id6738949653"
-                target="_blank"
-              >
-                <img
-                  src={appstore}
-                  alt="Apple App Store"
-                  width={130}
-                  style={{ cursor: "pointer" }}
-                />
-              </Link>
-            </Box>
-          </Box>
-        </Grid>
-      </Grid>
-
-      {/* Forgot Password Dialog */}
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Forgot Password</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Enter your email address and we'll send you a new password.
-          </Typography>
-          {forgotPasswordError && (
-            <Typography color="error">{forgotPasswordError}</Typography>
-          )}
-          {forgotPasswordSuccess && (
-            <Typography color="success">{forgotPasswordSuccess}</Typography>
-          )}
-          <TextField
-            fullWidth
-            label="Email"
-            variant="outlined"
-            margin="normal"
-            value={forgotEmail}
-            onChange={(e) => setForgotEmail(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)} color="secondary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleForgotPassword}
-            color="primary"
-            disabled={loading}
-          >
-            {loading ? "Submitting..." : "Submit"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
   );
 }
