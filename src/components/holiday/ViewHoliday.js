@@ -61,7 +61,7 @@ function ViewHoliday() {
                         color="primary"
                         onClick={() => setDialogOpen(true)}
                         sx={{ mb: 2 }}
-                        style={{ backgroundColor: "#CC7A00" }}
+                        style={{ backgroundColor: "#F69320" }}
                     >
                         Add Holiday
                     </Button> : null}

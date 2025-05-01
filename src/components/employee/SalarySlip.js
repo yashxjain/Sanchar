@@ -198,7 +198,7 @@ function SalarySlip() {
           variant="contained"
           size="small"
           onClick={downloadPDF}
-          sx={{ backgroundColor: "#CC7A00" }}
+          sx={{ backgroundColor: "#F69320" }}
         >
           Download PDF <GetAppIcon sx={{ color: "white", ml: 1 }} />
         </Button>

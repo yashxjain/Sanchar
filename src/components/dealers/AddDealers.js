@@ -43,7 +43,7 @@ function AddDealers({ open, onClose, onDealerAdded }) {
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle style={{ backgroundColor: "#CC7A00", color: "white" }}>Add Dealer</DialogTitle>
+            <DialogTitle style={{ backgroundColor: "#F69320", color: "white" }}>Add Dealer</DialogTitle>
             <DialogContent>
                 <TextField
                     label="Dealer Name"

@@ -193,7 +193,7 @@ const StudentBooksView = () => {
           <Typography
             variant="h5"
             fontWeight={700}
-            color="#CC7A00"
+            color="#F69320"
             gutterBottom
           >
             {studentData.CandidateName}
@@ -218,9 +218,9 @@ const StudentBooksView = () => {
             position: "absolute",
             top: 16,
             right: 36,
-            backgroundColor: "#CC7A00",
+            backgroundColor: "#F69320",
             "&:hover": {
-              backgroundColor: "#CC7A00",
+              backgroundColor: "#F69320",
             },
           }}
         >
@@ -237,7 +237,7 @@ const StudentBooksView = () => {
       />
       {/* Issued Books */}
       <Paper sx={{ p: 4, mb: 3, borderRadius: 3, boxShadow: 4 }}>
-        <Typography variant="h5" fontWeight={700} color="#CC7A00" gutterBottom>
+        <Typography variant="h5" fontWeight={700} color="#F69320" gutterBottom>
           Issued Books
         </Typography>
 
@@ -310,7 +310,7 @@ const StudentBooksView = () => {
 
       {/* Returned Books */}
       <Paper sx={{ p: 4, mb: 3, borderRadius: 3, boxShadow: 4 }}>
-        <Typography variant="h5" fontWeight={700} color="#CC7A00" gutterBottom>
+        <Typography variant="h5" fontWeight={700} color="#F69320" gutterBottom>
           Returned Books
         </Typography>
 

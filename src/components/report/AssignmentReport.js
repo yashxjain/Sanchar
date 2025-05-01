@@ -138,7 +138,7 @@ function AssignmentReport() {
                     variant="contained"
                     component="label"
                     startIcon={<CloudUploadIcon />}
-                    style={{ borderRadius: 1, backgroundColor:"#CC7A00"}}
+                    style={{ borderRadius: 1, backgroundColor:"#F69320"}}
                 >
                     Upload Excel File
                     <input

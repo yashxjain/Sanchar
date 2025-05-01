@@ -104,7 +104,7 @@ function ListAssignmentReport() {
                 <Paper sx={{ borderRadius: '16px' }}>
                     <TableContainer>
                         <Table>
-                            <TableHead sx={{ backgroundColor: '#CC7A00' }}>
+                            <TableHead sx={{ backgroundColor: '#F69320' }}>
                                 <TableRow>
                                     <TableCell sx={{ color: '#fff' }}>Student ID</TableCell>
                                     <TableCell sx={{ color: '#fff' }}>Course</TableCell>

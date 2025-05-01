@@ -407,7 +407,7 @@ console.log("Same Menu ID: ", formData.SameMenuId);
             type="submit"
             variant="contained"
             disabled={isSubmitting}
-            style={{ backgroundColor: "#CC7A00", color: "#fff" }}
+            style={{ backgroundColor: "#F69320", color: "#fff" }}
           >
             {isSubmitting ? "Adding..." : "Add Menu"}
           </Button>

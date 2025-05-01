@@ -125,7 +125,7 @@ const StudentFeesTransaction = () => {
           <Typography
             variant="h5"
             fontWeight={700}
-            color="#CC7A00"
+            color="#F69320"
             gutterBottom
           >
             {studentData.CandidateName}
@@ -141,7 +141,7 @@ const StudentFeesTransaction = () => {
 
       {/* Fee Installments */}
       <Paper sx={{ p: 4, mb: 3, borderRadius: 3, boxShadow: 4 }}>
-        <Typography variant="h5" fontWeight={700} color="#CC7A00" gutterBottom>
+        <Typography variant="h5" fontWeight={700} color="#F69320" gutterBottom>
           Fee Installments
         </Typography>
 
@@ -254,7 +254,7 @@ const StudentFeesTransaction = () => {
                           variant="contained"
                           fullWidth
                           onClick={() => handleOpenDialog(fee)}
-                          sx={{ color: "white", backgroundColor: "#CC7A00" }}
+                          sx={{ color: "white", backgroundColor: "#F69320" }}
                         >
                           Pay
                         </Button>

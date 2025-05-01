@@ -195,13 +195,13 @@ useEffect(() => {
                 variant="contained"
                 color="primary"
                 onClick={exportToCsv}
-                style={{ marginBottom: '16px', backgroundColor: "#CC7A00", float: "right" }}
+                style={{ marginBottom: '16px', backgroundColor: "#F69320", float: "right" }}
             >
                 Export CSV
             </Button>
             <TableContainer component={Paper}>
                 <Table>
-                    <TableHead style={{ backgroundColor: "#CC7A00" }}>
+                    <TableHead style={{ backgroundColor: "#F69320" }}>
                         <TableRow>
                             <TableCell style={{ color: "white" }}>Employee Name</TableCell>
                             <TableCell style={{ color: "white" }}>Expense Date</TableCell>
@@ -225,7 +225,7 @@ useEffect(() => {
                                         {expense.image ? (
                                             <Button
                                                 variant="contained"
-                                                style={{ backgroundColor: "#CC7A00" }}
+                                                style={{ backgroundColor: "#F69320" }}
                                                 onClick={() => handleViewImage(expense.image)}
                                             >
                                                 View

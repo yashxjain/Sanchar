@@ -64,13 +64,13 @@ const StructureList = () => {
               <h2>Fee Structure List</h2>
                {/* <Button
           onClick={() => navigate('/fees-payment')}
-          style={{ backgroundColor: "#CC7A00", color: "white" }}
+          style={{ backgroundColor: "#F69320", color: "white" }}
         >
            FEES PAYMENT
         </Button> */}
         <Button
           onClick={() => setDialogOpen(true)}
-          style={{ backgroundColor: "#CC7A00", color: "white" }}
+          style={{ backgroundColor: "#F69320", color: "white" }}
         >
           Add Fee Structure
         </Button>
@@ -82,7 +82,7 @@ const StructureList = () => {
       />
       <TableContainer component={Paper}>
         <Table>
-          <TableHead style={{ backgroundColor: "#CC7A00" }}>
+          <TableHead style={{ backgroundColor: "#F69320" }}>
             <TableRow>
               <TableCell style={{ color: "white" }}>ID</TableCell>
               <TableCell style={{ color: "white" }}>Course</TableCell>

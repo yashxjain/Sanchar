@@ -166,7 +166,7 @@ const DashboardData = ({EmpId}) => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <Typography variant="h5" gutterBottom style={{ color: "#CC7A00" }}>
+                        <Typography variant="h5" gutterBottom style={{ color: "#F69320" }}>
                             {employeeData?.Name || 'N/A'}'s Details
                         </Typography>
                         <Divider sx={{ marginY: 2 }} />
@@ -253,7 +253,7 @@ const DashboardData = ({EmpId}) => {
                    
                     <Box sx={{ mt: 2 }}>
                         <Typography variant="body1">SL: {leaveDetails?.SL || 0}</Typography>
-                        <LinearProgress variant="determinate" value={(leaveDetails?.SL / 12) * 100} sx={{ backgroundColor: "#CC7A00" }} />
+                        <LinearProgress variant="determinate" value={(leaveDetails?.SL / 12) * 100} sx={{ backgroundColor: "#F69320" }} />
                     </Box>
                     
                 </motion.div>
@@ -367,7 +367,7 @@ const DashboardData = ({EmpId}) => {
                     transition={{ duration: 0.5, delay: 0.3 }}
                 >
                     <Table>
-                        <TableHead style={{ backgroundColor: "#CC7A00" }}>
+                        <TableHead style={{ backgroundColor: "#F69320" }}>
                             <TableRow>
                                 <TableCell style={{ color: "white" }}>Asset</TableCell>
                                 <TableCell style={{ color: "white" }}> Make</TableCell>

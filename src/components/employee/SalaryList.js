@@ -131,7 +131,7 @@ function SalaryList() {
                     variant="contained"
                     size="small"
                     onClick={exportToCSV}
-                    sx={{ backgroundColor: '#CC7A00' }}
+                    sx={{ backgroundColor: '#F69320' }}
                 >
                    Summary <GetAppIcon sx={{ color: 'white' }} />
                 </Button>
@@ -139,7 +139,7 @@ function SalaryList() {
 
             {/* <TableContainer component={Paper}>
                 <Table size='small'>
-                    <TableHead style={{ backgroundColor: "#CC7A00" }}>
+                    <TableHead style={{ backgroundColor: "#F69320" }}>
                         <TableRow>
                             {['Employee ID', 'Name', 'Designation', 'Salary', 'Total Days in Month', 'Holidays', 'Week Offs', 'Present Days', 'Leave Days', 'Actual Working Days', 'Salary'].map((header) => (
                                 <TableCell key={header} style={{ color: "white" }}>{header}</TableCell>

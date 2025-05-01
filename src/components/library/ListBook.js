@@ -106,7 +106,7 @@ function ListBook({ setView, defaultStatusFilter = '' }) {
                 <Paper sx={{ width: '100%', overflow: 'hidden', borderRadius: '16px' }}>
                     <TableContainer>
                         <Table>
-                            <TableHead sx={{ backgroundColor: '#CC7A00' }}>
+                            <TableHead sx={{ backgroundColor: '#F69320' }}>
                                 <TableRow>
                                     <TableCell sx={{ color: '#fff' }}>Book ID</TableCell>
                                     <TableCell sx={{ color: '#fff' }}>Title</TableCell>

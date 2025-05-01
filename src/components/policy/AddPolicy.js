@@ -59,7 +59,7 @@ function AddPolicyDialog({ open, onClose, onPolicyAdded }) {
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle style={{ backgroundColor: "#CC7A00", color: "white" }}>Add Policy</DialogTitle>
+            <DialogTitle style={{ backgroundColor: "#F69320", color: "white" }}>Add Policy</DialogTitle>
             <DialogContent>
                 <form onSubmit={handleSubmit}>
                     <TextField

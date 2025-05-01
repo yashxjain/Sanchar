@@ -152,7 +152,7 @@ function InternalExam() {
                         variant="contained"
                         component="label"
                         startIcon={<CloudUploadIcon />}
-                        sx={{ backgroundColor: "#CC7A00", '&:hover': { backgroundColor: "#b36600" } }}
+                        sx={{ backgroundColor: "#F69320", '&:hover': { backgroundColor: "#b36600" } }}
                     >
                         Upload Excel
                         <input
@@ -170,7 +170,7 @@ function InternalExam() {
                         variant="contained"
                         disabled={!file || !course || !sem || !subject}
                         onClick={handleUpload}
-                        sx={{ backgroundColor: "#CC7A00", '&:hover': { backgroundColor: "#b36600" } }}
+                        sx={{ backgroundColor: "#F69320", '&:hover': { backgroundColor: "#b36600" } }}
                     >
                         Submit
                     </Button>

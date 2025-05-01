@@ -305,7 +305,7 @@ function EmployeeList() {
                     <Button
                         variant="contained"
                         color="primary"
-                        style={{ backgroundColor: "#CC7A00" }}
+                        style={{ backgroundColor: "#F69320" }}
                         startIcon={<AddIcon />}
                         onClick={() => handleOpenForm('add')}
                     >
@@ -316,7 +316,7 @@ function EmployeeList() {
             <Box sx={{ overflowX: 'auto', mt: 2 }}>
                 <TableContainer component={Paper}>
                     <Table>
-                        <TableHead style={{ backgroundColor: "#CC7A00" }}>
+                        <TableHead style={{ backgroundColor: "#F69320" }}>
                             <TableRow>
                                 <TableCell style={{ color: "white" }}>EmpID</TableCell>
                                 <TableCell style={{ color: "white" }}>Name</TableCell>

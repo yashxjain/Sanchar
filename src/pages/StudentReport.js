@@ -52,7 +52,7 @@ function StudentReport() {
                     <Paper elevation={1} sx={{ p: 2, mb: 3, borderRadius: 2, backgroundColor: '#ffffff' }}>
                         <Grid container alignItems="center" spacing={2} justifyContent="space-between">
                             <Grid item xs={12} md="auto">
-                                <Typography variant="h6" color="#CC7A00" fontWeight="bold">
+                                <Typography variant="h6" color="#F69320" fontWeight="bold">
                                     {category} Report Dashboard
                                 </Typography>
                             </Grid>

@@ -143,7 +143,7 @@ export default function LoginPage() {
       
       
     />
-    <Typography variant="h5" sx={{ color: 'black', mb: 2 }}>
+    <Typography variant="h5" sx={{ color: 'black', mb: 2,fontWeight: 'bold' }}>
       WELCOME TO SANCHAR
     </Typography>
     {error && <Typography color="error">{error}</Typography>}
@@ -177,7 +177,7 @@ export default function LoginPage() {
         variant="contained"
         type="submit"
         disabled={loading}
-        sx={{ mt: 2, backgroundColor: '#CC7A00', color: 'white' }}
+        sx={{ mt: 2, backgroundColor: '#F69320', color: 'white' }}
       >
         {loading ? 'Logging in...' : 'Login'}
       </Button>

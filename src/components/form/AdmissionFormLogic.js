@@ -370,16 +370,17 @@ const handleSubmit = async () => {
         <Button
           variant="contained"
           disabled={currentPage === 0}
+          style={{backgroundColor:"#F69320"}}
           onClick={() => setCurrentPage((prev) => prev - 1)}
         >
           Previous
         </Button>
         {currentPage === pages.length - 1 ? (
-  <Button variant="contained" onClick={handleSubmit}>
+  <Button variant="contained" style={{backgroundColor:"#F69320"}} onClick={handleSubmit}>
     Submit
   </Button>
 ) : (
-  <Button variant="contained" onClick={handleNext}>
+  <Button variant="contained" style={{backgroundColor:"#F69320"}} onClick={handleNext}>
     Next
   </Button>
 )}

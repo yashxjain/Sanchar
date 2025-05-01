@@ -83,7 +83,7 @@ const formatDate = (datetime) => {
 
             <TableContainer component={Paper} sx={{ mb: 2 }}>
                 <Table size='small'>
-                    <TableHead sx={{ backgroundColor: "#CC7A00" }}>
+                    <TableHead sx={{ backgroundColor: "#F69320" }}>
                         <TableRow>
                             <TableCell sx={{ color: 'white' }}>Admission ID</TableCell>
                             <TableCell sx={{ color: 'white' }}>Name</TableCell>

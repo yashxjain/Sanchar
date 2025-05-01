@@ -96,13 +96,13 @@ function ViewLeave() {
             <Button
                 variant="contained"
                 onClick={exportToCsv}
-                style={{ backgroundColor: "#CC7A00", float: "right", marginBottom: 16 }}
+                style={{ backgroundColor: "#F69320", float: "right", marginBottom: 16 }}
             >
                 Export CSV
             </Button>
             <TableContainer component={Paper}>
                 <Table>
-                    <TableHead style={{ backgroundColor: "#CC7A00" }}>
+                    <TableHead style={{ backgroundColor: "#F69320" }}>
                         <TableRow>
                             <TableCell sx={{ color: "#fff" }}>Employee Name</TableCell>
                             <TableCell sx={{ color: "#fff" }}>Date</TableCell>

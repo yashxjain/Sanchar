@@ -300,7 +300,7 @@ const AttendanceList = () => {
         {user.role === "HR" && (
           <Button
             variant="contained"
-            style={{ backgroundColor: "#CC7A00", color: "white" }}
+            style={{ backgroundColor: "#F69320", color: "white" }}
             onClick={regularise}
             sx={{ m: 1 }}
           >
@@ -309,7 +309,7 @@ const AttendanceList = () => {
         )}
         <Button
           variant="contained"
-          style={{ backgroundColor: "#CC7A00", color: "white" }}
+          style={{ backgroundColor: "#F69320", color: "white" }}
           onClick={exportToCsv}
           sx={{ m: 1 }}
         >
@@ -353,7 +353,7 @@ const AttendanceList = () => {
             <TableContainer sx={{ maxHeight: 500 }} stickyHeader>
               <Table>
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: "#CC7A00" }}>
+                  <TableRow sx={{ backgroundColor: "#F69320" }}>
                     <TableCell sx={{ color: "white" }}>Date</TableCell>
                     {!isMobile && (
                       <TableCell sx={{ color: "white" }}>In</TableCell>
@@ -381,7 +381,7 @@ const AttendanceList = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               style={{
-                                color: "#CC7A00",
+                                color: "#F69320",
                                 textDecoration: "none",
                               }}
                             >
@@ -397,7 +397,7 @@ const AttendanceList = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{
-                                  color: "#CC7A00",
+                                  color: "#F69320",
                                   textDecoration: "none",
                                 }}
                               >

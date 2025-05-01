@@ -144,7 +144,7 @@ const AttendanceReport = () => {
                     sx={{ width: "200px" }}
                     InputLabelProps={{ shrink: true }}
                 />
-                <Button variant="contained" onClick={exportAttendanceToCSV} size="small" style={{ backgroundColor: '#CC7A00' }}>
+                <Button variant="contained" onClick={exportAttendanceToCSV} size="small" style={{ backgroundColor: '#F69320' }}>
                     <GetAppIcon />
                 </Button>
             </Box>

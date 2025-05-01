@@ -27,8 +27,8 @@ function Maps() {
                         variant="contained"
                         onClick={() => setSelectedTab("visitMap")}
                         sx={{ 
-                            backgroundColor: selectedTab === "visitMap" ? "#CC7A00" : "#B0BEC5", 
-                            color: selectedTab === "visitMap" ? "white" : "#CC7A00",
+                            backgroundColor: selectedTab === "visitMap" ? "#F69320" : "#B0BEC5", 
+                            color: selectedTab === "visitMap" ? "white" : "#F69320",
                             '&:hover': { backgroundColor: selectedTab === "visitMap" ? "#16263D" : "#90A4AE" }
                         }}
                     >
@@ -38,8 +38,8 @@ function Maps() {
                         variant="contained"
                         onClick={() => setSelectedTab("liveField")}
                         sx={{ 
-                            backgroundColor: selectedTab === "liveField" ? "#CC7A00" : "#B0BEC5", 
-                            color: selectedTab === "liveField" ? "white" : "#CC7A00",
+                            backgroundColor: selectedTab === "liveField" ? "#F69320" : "#B0BEC5", 
+                            color: selectedTab === "liveField" ? "white" : "#F69320",
                             '&:hover': { backgroundColor: selectedTab === "liveField" ? "#16263D" : "#90A4AE" }
                         }}
                     >

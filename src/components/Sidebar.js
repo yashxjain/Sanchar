@@ -38,7 +38,7 @@ function Sidebar() {
 
     // Default routes visible to everyone
     const defaultRoutes = [
-        { path: '/admissions', name: 'Admissions', icon: <AddHomeWorkIcon /> },
+        // { path: '/admissions', name: 'Admissions', icon: <AddHomeWorkIcon /> },
         // { path: '/notification', name: 'Notification', icon: <Notifications /> }
 
     ];
@@ -50,7 +50,7 @@ function Sidebar() {
     if (user?.role === 'Teacher') {
         allowedRoutes.push(
            
-            { path: '/report', name: 'Report', icon: <SummarizeIcon /> },
+            // { path: '/report', name: 'Report', icon: <SummarizeIcon /> },
              { path: '/menus', name: 'Menus', icon: <MenuIcon /> },
             { path: '/checkpoints', name: 'Checkpoints', icon: <ChecklistIcon /> },
         { path: '/form', name: 'Form', icon: <DynamicFormIcon /> },

@@ -510,7 +510,7 @@ const AddCheckpointForm = () => {
                                 variant="contained"
                                 color="primary"
                                 onClick={addOptionField}
-                                style={{ backgroundColor: '#CC7A00', color: '#fff' }}
+                                style={{ backgroundColor: '#F69320', color: '#fff' }}
                             >
                                 <AddIcon/> Add More Option
                             </Button>
@@ -585,7 +585,7 @@ const AddCheckpointForm = () => {
                                 variant="contained"
                                 color="primary"
                                 onClick={addOptionField}
-                                style={{ backgroundColor: '#CC7A00', color: '#fff' }}
+                                style={{ backgroundColor: '#F69320', color: '#fff' }}
                             >
                                 <AddIcon/> Add More Option
                             </Button>
@@ -750,7 +750,7 @@ const AddCheckpointForm = () => {
                                 variant="contained"
                                 color="primary"
                                 onClick={addOptionField}
-                                style={{ backgroundColor: '#CC7A00', color: '#fff' }}
+                                style={{ backgroundColor: '#F69320', color: '#fff' }}
                             >
                                 <AddIcon/> Add More Option
                             </Button>
@@ -915,7 +915,7 @@ const AddCheckpointForm = () => {
     type="submit"
     variant="contained"
     disabled={isSubmitting}
-    style={{ backgroundColor: '#CC7A00', color: '#fff' }}
+    style={{ backgroundColor: '#F69320', color: '#fff' }}
   >
     {isSubmitting ? 'Adding...' : 'Add Checkpoint'}
   </Button>

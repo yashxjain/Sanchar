@@ -193,7 +193,7 @@ const handleViewImage = async (visitId) => {
             />
             <Button
                 variant="contained"
-                style={{ marginBottom: 20, backgroundColor: "#CC7A00", color: "white" }}
+                style={{ marginBottom: 20, backgroundColor: "#F69320", color: "white" }}
                 onClick={fetchVisits}
             >
                 Go
@@ -203,7 +203,7 @@ const handleViewImage = async (visitId) => {
                 <div>
                     <Button
                 variant="contained"
-                style={{ marginBottom: 20, backgroundColor: "#CC7A00", color: "white" }}
+                style={{ marginBottom: 20, backgroundColor: "#F69320", color: "white" }}
                 onClick={planVisit}
             >
                 Plan Visits
@@ -213,7 +213,7 @@ const handleViewImage = async (visitId) => {
           
             {/* <Button
                 variant="contained"
-                style={{ backgroundColor: "#CC7A00", color: "white", marginTop: 10 }}
+                style={{ backgroundColor: "#F69320", color: "white", marginTop: 10 }}
                 onClick={() => setShowMap(!showMap)}
             >
                 {showMap ? 'Hide Map' : 'Show Map'}
@@ -240,7 +240,7 @@ const handleViewImage = async (visitId) => {
 ) : (
     <TableContainer component={Paper}>
         <Table>
-            <TableHead style={{ backgroundColor: "#CC7A00" }}>
+            <TableHead style={{ backgroundColor: "#F69320" }}>
                 <TableRow>
                     <TableCell style={{ color: "white" }}>Company Name</TableCell>
                     <TableCell style={{ color: "white" }}>Dealer Name</TableCell>

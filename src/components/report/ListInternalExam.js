@@ -56,7 +56,7 @@ function ListInternalExam({ setView }) {
         <Box sx={{ p: 0 }}>
             {/* Header Section */}
             <Box elevation={1} sx={{ p: 0, borderRadius: 2, mb: 1 }}>
-                <Typography variant="h6" color="#CC7A00" gutterBottom>
+                <Typography variant="h6" color="#F69320" gutterBottom>
                     Internal Exam Report
                 </Typography>
 
@@ -114,7 +114,7 @@ function ListInternalExam({ setView }) {
                 <Paper elevation={2} sx={{ borderRadius: 2, p:0 }}>
                     <TableContainer>
                         <Table>
-                            <TableHead sx={{ backgroundColor: '#CC7A00' }}>
+                            <TableHead sx={{ backgroundColor: '#F69320' }}>
                                 <TableRow>
                                     <TableCell sx={{ color: '#fff' }}>Student ID</TableCell>
                                     <TableCell sx={{ color: '#fff' }}>Course</TableCell>

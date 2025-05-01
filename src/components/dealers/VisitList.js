@@ -157,10 +157,10 @@ const VisitList = () => {
                     InputLabelProps={{ shrink: true }}
                 />
 
-                <Button variant="contained" onClick={exportSummaryToCSV} size="small" sx={{ backgroundColor: '#CC7A00' }}>
+                <Button variant="contained" onClick={exportSummaryToCSV} size="small" sx={{ backgroundColor: '#F69320' }}>
                      Summary  <GetAppIcon/>
                 </Button>
-                <Button variant="contained" onClick={exportDetailToCSV} size="small" sx={{ backgroundColor: '#CC7A00' }}>
+                <Button variant="contained" onClick={exportDetailToCSV} size="small" sx={{ backgroundColor: '#F69320' }}>
                      Detailed  <GetAppIcon/>
                 </Button>
             </Box>

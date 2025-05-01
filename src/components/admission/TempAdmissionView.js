@@ -228,7 +228,7 @@ localStorage.setItem("student_course", course);
         <Typography
           variant="h6"
           gutterBottom
-          sx={{ color: "#CC7A00", fontWeight: 700 }}
+          sx={{ color: "#F69320", fontWeight: 700 }}
         >
           {title}
         </Typography>
@@ -324,12 +324,12 @@ localStorage.setItem("student_course", course);
         <Button
           variant="outlined"
           onClick={() => navigate(-1)}
-          sx={{ color: "#CC7A00", borderColor: "#CC7A00" }}
+          sx={{ color: "#F69320", borderColor: "#F69320" }}
         >
           Back
         </Button>
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, color: "#CC7A00" }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: "#F69320" }}>
             Lakshay Institute Of Technology
           </Typography>
           <Typography variant="subtitle1">Admission Form Details</Typography>
@@ -372,13 +372,13 @@ localStorage.setItem("student_course", course);
       >
         <Button
         variant="contained"
-        sx={{ backgroundColor: "#CC7A00" }}
+        sx={{ backgroundColor: "#F69320" }}
       >
         Reject
       </Button>
       <Button
         variant="contained"
-        sx={{ backgroundColor: "#CC7A00" }}
+        sx={{ backgroundColor: "#F69320" }}
         onClick={handleNext}
       >
         Enroll

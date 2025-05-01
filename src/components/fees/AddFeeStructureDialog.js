@@ -83,7 +83,7 @@ const AddFeeStructureDialog = ({ open, onClose, onSuccess }) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button onClick={handleSubmit} variant="contained" style={{backgroundColor:"#CC7A00"}}>Add</Button>
+                    <Button onClick={handleSubmit} variant="contained" style={{backgroundColor:"#F69320"}}>Add</Button>
                 </DialogActions>
             </Dialog>
 

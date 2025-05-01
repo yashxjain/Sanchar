@@ -152,12 +152,12 @@ const FinalizeAdmissionView = () => {
           gap: 2
         }}
       >
-        <Typography variant="h5" fontWeight={700} color="#CC7A00" sx={{ flexGrow: 1 }}>
+        <Typography variant="h5" fontWeight={700} color="#F69320" sx={{ flexGrow: 1 }}>
           Student Fee Structure
         </Typography>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Typography variant="h6" fontWeight={700} color="#CC7A00" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" fontWeight={700} color="#F69320" sx={{ flexGrow: 1 }}>
           Total Scholarship
         </Typography>
           <TextField
@@ -228,7 +228,7 @@ const FinalizeAdmissionView = () => {
       >
         <Button
           variant="contained"
-          sx={{ backgroundColor: "#CC7A00" }}
+          sx={{ backgroundColor: "#F69320" }}
           onClick={handleSubmit}
         >
           Submit

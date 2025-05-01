@@ -35,7 +35,7 @@ function Expense() {
                 <Navbar />
                 <div style={{ marginTop: "10px", marginLeft: "10px" }}>
 
-                    <Button variant="contained" color="primary" onClick={handleOpenApplyExpenseDialog} style={{ marginLeft: '10px', backgroundColor: "#CC7A00" }} >
+                    <Button variant="contained" color="primary" onClick={handleOpenApplyExpenseDialog} style={{ marginLeft: '10px', backgroundColor: "#F69320" }} >
                         Apply for Expense
                     </Button>
 

@@ -53,7 +53,7 @@ function DocketList() {
             <Typography variant="h5" sx={{ mb: 2 }}>{menu?.Cat || 'Menu'}</Typography>
             <TableContainer component={Paper}>
                 <Table>
-                    <TableHead style={{ backgroundColor: "#CC7A00" }}>
+                    <TableHead style={{ backgroundColor: "#F69320" }}>
                         <TableRow>
                             {checkpoints.map((cp) => (
                                 <TableCell key={cp.CheckpointId} style={{ color: "white" }}>{cp.Description}</TableCell>

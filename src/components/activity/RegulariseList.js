@@ -105,7 +105,7 @@ const RegulariseList = () => {
             <Typography variant="h5">Regularisation Requests</Typography>
             <TableContainer component={Paper} style={{ marginTop: '10px' }}>
                 <Table>
-                    <TableHead style={{ backgroundColor: '#CC7A00' }}>
+                    <TableHead style={{ backgroundColor: '#F69320' }}>
                         <TableRow>
                             <TableCell style={{ color: 'white' }}>Employee</TableCell>
                             <TableCell style={{ color: 'white' }}>Date</TableCell>
