@@ -26,8 +26,8 @@ function TempAdmissionView() {
 
   // Checkpoint groups
   const sections = {
-    "Address for Correspondence": [15, 16],
-    "Academic Records of Qualifying Examination": [
+    "Participants Details": [15, 16],
+    "Winner Tender": [
       18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
     ],
     "List of Attached Documents": [31, 33, 35, 37, 38, 39, 40],
@@ -174,31 +174,7 @@ localStorage.setItem("student_course", course);
 
     return (
       <Grid container spacing={2} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={3} sx={{ textAlign: "center" }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              mb: 2,
-              width: "100%",
-            }}
-          >
-            <Box
-              component="img"
-              src={getValueByChkId(studentPhotoChkId)}
-              alt="Student"
-              sx={{
-                width: "180px",
-                height: "180px",
-                objectFit: "fill",
-                borderRadius: 2,
-                border: "1px solid #ccc",
-                boxShadow: 2,
-              }}
-            />
-          </Box>
-        </Grid>
+        
         <Grid item xs={12} sm={9}>
           <Grid container spacing={2}>
             {otherFields.map((f, idx) => (
@@ -330,16 +306,14 @@ localStorage.setItem("student_course", course);
         </Button>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: "#F69320" }}>
-            Lakshay Institute Of Technology
+            SANCHHAR RAILWAY TENDERS
           </Typography>
-          <Typography variant="subtitle1">Admission Form Details</Typography>
+          <Typography variant="subtitle1">TENDER Form Details</Typography>
         </Box>
       </Box>
-      <Avatar
+      <img
         src={logo}
         alt="College Logo"
-        sx={{ width: 80, height: 80 }}
-        variant="rounded"
       />
     </Box>
 
@@ -374,14 +348,14 @@ localStorage.setItem("student_course", course);
         variant="contained"
         sx={{ backgroundColor: "#F69320" }}
       >
-        Reject
+        CLOSE
       </Button>
       <Button
         variant="contained"
         sx={{ backgroundColor: "#F69320" }}
         onClick={handleNext}
       >
-        Enroll
+        START
       </Button>
     </Box>
   </Box>

@@ -15,6 +15,8 @@ import {
   Checkbox,
   FormGroup,
   FormLabel,
+  Paper,
+  Stepper, Step, StepLabel
 } from "@mui/material";
 
 function AdmissionFormLogic() {
@@ -223,7 +225,7 @@ function AdmissionFormLogic() {
               );
 
             default:
-              return <TextField fullWidth disabled />;
+              return <TextField size="small" disabled />;
           }
         })()}
       </Grid>
@@ -351,42 +353,103 @@ const handleSubmit = async () => {
 
 
   return (
-    <Box sx={{ mt: 1, p: 1 }}>
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Page {currentPage + 1} of {pages.length}
-      </Typography>
-      <Divider sx={{ mb: 2 }} />
+    // Update only styles & spacing for more compact layout:
+<Box sx={{ mt: 1, px: 1 }}>
+  <Box
+    sx={{
+      background: "linear-gradient(to right, #F69320, #FFC107)",
+      color: "white",
+      py: 1,
+      borderRadius: 1,
+      textAlign: "center",
+      mb: 2,
+    }}
+  >
+    <Typography variant="h5">Tender Application Form</Typography>
+    <Typography variant="body2">Please complete all sections</Typography>
+  </Box>
 
-      {pageData?.map((id) => {
-        const cp = checkpoints.find((c) => c.CheckpointId === id);
-        return cp ? (
-          <Box key={id} sx={{ mb: 2 }}>
-            {renderField(cp)}
-          </Box>
-        ) : null;
-      })}
+  <Stepper activeStep={currentPage} alternativeLabel sx={{ mb: 2 }}>
+    {pages.map((_, index) => (
+      <Step key={index}>
+        <StepLabel>Step {index + 1}</StepLabel>
+      </Step>
+    ))}
+  </Stepper>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
-        <Button
-          variant="contained"
-          disabled={currentPage === 0}
-          style={{backgroundColor:"#F69320"}}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-        >
-          Previous
-        </Button>
-        {currentPage === pages.length - 1 ? (
-  <Button variant="contained" style={{backgroundColor:"#F69320"}} onClick={handleSubmit}>
-    Submit
-  </Button>
-) : (
-  <Button variant="contained" style={{backgroundColor:"#F69320"}} onClick={handleNext}>
-    Next
-  </Button>
-)}
+  {pageData?.map((id, index) => {
+  const cp = checkpoints.find((c) => c.CheckpointId === id);
+  if (!cp) return null;
 
-      </Box>
+  const isEven = index % 2 === 0;
+  const bgColor = isEven ? "#f0f0f0" : "#dcdcdc"; // light grey and grey
+
+  return (
+    <Box key={id} sx={{ mb: 1 }}>
+      <Paper
+        elevation={1}
+        sx={{
+          p: 1,
+          borderRadius: 1,
+          maxWidth: "70%",
+          mx: "auto",
+          backgroundColor: bgColor,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: "bold",
+              mr: 1,
+              minWidth: "30px",
+              textAlign: "center",
+            }}
+          >
+            {index + 1}.
+          </Typography>
+          <Box sx={{ flexGrow: 1 }}>{renderField(cp)}</Box>
+        </Box>
+      </Paper>
     </Box>
+  );
+})}
+
+
+  <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+    <Button
+      variant="contained"
+      disabled={currentPage === 0}
+      sx={{ backgroundColor: "#F69320", minWidth: "100px" }}
+      onClick={() => setCurrentPage((prev) => prev - 1)}
+    >
+      Previous
+    </Button>
+
+    <Typography variant="body1" sx={{ alignSelf: "center" }}>
+      {`Step ${currentPage + 1} of ${pages.length}`}
+    </Typography>
+
+    {currentPage === pages.length - 1 ? (
+      <Button
+        variant="contained"
+        sx={{ backgroundColor: "#F69320", minWidth: "100px" }}
+        onClick={handleSubmit}
+      >
+        Submit
+      </Button>
+    ) : (
+      <Button
+        variant="contained"
+        sx={{ backgroundColor: "#F69320", minWidth: "100px" }}
+        onClick={handleNext}
+      >
+        Next
+      </Button>
+    )}
+  </Box>
+</Box>
+
   );
 }
 

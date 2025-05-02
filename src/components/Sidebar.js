@@ -51,9 +51,9 @@ function Sidebar() {
         allowedRoutes.push(
            
             // { path: '/report', name: 'Report', icon: <SummarizeIcon /> },
-             { path: '/menus', name: 'Menus', icon: <MenuIcon /> },
-            { path: '/checkpoints', name: 'Checkpoints', icon: <ChecklistIcon /> },
-        { path: '/form', name: 'Form', icon: <DynamicFormIcon /> },
+            //  { path: '/menus', name: 'Menus', icon: <MenuIcon /> },
+            // { path: '/checkpoints', name: 'Checkpoints', icon: <ChecklistIcon /> },
+        { path: '/tender', name: 'Tender', icon: <DynamicFormIcon /> },
         );
     }
 

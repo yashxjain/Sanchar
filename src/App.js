@@ -14,7 +14,6 @@ import EmpProfile from './pages/User';
 import PrivateRoute from './components/auth/PrivateRoute';
 import EmployeeProfile from './pages/EmployeeProfile';
 import VisitReport from './pages/VisitReport';
-import Admission from './pages/Admission';
 import ViewAdmission from './pages/ViewAdmission';
 import Library from './pages/Library';
 import AdmissionFinal from './pages/AdmissionFinal';
@@ -27,6 +26,7 @@ import StudentReport from './pages/StudentReport';
 import Menus from './pages/Menus';
 import Checkpoints from './pages/Checkpoints';
 import Form from './pages/Form';
+import Tendor from './pages/Tendor';
 function App() {
    useEffect(() => {
         const handleRightClick = (event) => {
@@ -52,7 +52,7 @@ function App() {
             <Route path="/attendance" element={<PrivateRoute element={Attendance} />} />
             <Route path="/notification" element={<PrivateRoute element={Notification} />} />
             <Route path="/leave" element={<PrivateRoute element={Leave} />} />
-            <Route path="/admissions" element={<PrivateRoute element={Admission} />} />
+            {/* <Route path="/admissions" element={<PrivateRoute element={Admission} />} /> */}
             <Route path="/admissions/view/:activityId" element={<PrivateRoute element={ViewAdmission} />} />
             <Route path="/admissions/finalize" element={<PrivateRoute element={AdmissionFinal} />} />
             <Route path="/profile" element={<PrivateRoute element={EmpProfile} />} />
@@ -67,14 +67,15 @@ function App() {
 
 
 
+            <Route path="/tender" element={<PrivateRoute element={Tendor} />} />
 
+            <Route path="/create-tender" element={<PrivateRoute element={Tendor} />} />
 
             {/* Optional Routes */}
             <Route path="/menus" element={<PrivateRoute element={Menus} />} />
             <Route path="/add-menu" element={<PrivateRoute element={Menus} />} />
 
             <Route path="/checkpoints" element={<PrivateRoute element={Checkpoints} />} />
-            <Route path="/form" element={<PrivateRoute element={Form} />} />
             <Route path="/add-checkpoint" element={<PrivateRoute element={Checkpoints} />} />
           </Routes>
         </Router>

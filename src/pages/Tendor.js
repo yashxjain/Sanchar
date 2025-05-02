@@ -2,9 +2,10 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { Box, useMediaQuery } from '@mui/material';
-import AdmissionList from '../components/admission/AdmissionList';
+import TendorList from '../components/admission/TendorList';
+import AdmissionFormLogic from '../components/form/AdmissionFormLogic';
 
-function Admission() {
+function Tendor() {
     const isMobile = useMediaQuery('(max-width:600px)');
     const drawerWidth = isMobile ? 0 : 100;
 
@@ -17,11 +18,14 @@ function Admission() {
             <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
                 <Navbar />
                 <Box sx={{ mt: 1, p: 1 }}>
-                    <AdmissionList/>
+                   
+                                       {window.location.href.includes('/tender') && <TendorList />} 
+                                       {window.location.href.includes('/create-tender') && <AdmissionFormLogic/>} 
+                                  
                 </Box>
             </Box>
         </Box>
     );
 }
 
-export default Admission;
+export default Tendor;
