@@ -14,10 +14,10 @@ import {
   Radio,
   Checkbox,
   FormGroup,
-  FormLabel,
   Paper,
   Stepper, Step, StepLabel
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 function AdmissionFormLogic() {
   const [pages, setPages] = useState([]);
@@ -26,7 +26,7 @@ function AdmissionFormLogic() {
   const [currentPage, setCurrentPage] = useState(0);
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
-
+const navigate = useNavigate()
   const handleChange = (id, value) => {
     setFormData((prev) => ({ ...prev, [id]: value }));
     setErrors((prev) => ({ ...prev, [id]: false }));
@@ -344,6 +344,7 @@ const handleSubmit = async () => {
       }
 
       Swal.fire("Success", "Form submitted successfully!", "success");
+      navigate("/tender")
     } catch (error) {
       console.error("Submission error", error);
       Swal.fire("Error", "Submission failed", "error");
