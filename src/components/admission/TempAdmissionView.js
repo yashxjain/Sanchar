@@ -28,7 +28,7 @@ function TempAdmissionView() {
   const sections = {
     "Participants Details": [15, 16],
     "Winner Tender": [
-      18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+      17,18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
     ],
     "List of Attached Documents": [31, 33, 35, 37, 38, 39, 40],
     "Prefrences": [28,29],
