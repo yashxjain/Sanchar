@@ -10,23 +10,14 @@ import Policy from './pages/Policy';
 import Attendance from './pages/Attendance';
 import Notification from './pages/Notification';
 import Leave from './pages/Leave';
-import EmpProfile from './pages/User';
 import PrivateRoute from './components/auth/PrivateRoute';
 import EmployeeProfile from './pages/EmployeeProfile';
-import VisitReport from './pages/VisitReport';
-import ViewAdmission from './pages/ViewAdmission';
-import Library from './pages/Library';
-import AdmissionFinal from './pages/AdmissionFinal';
-import FeesStructure from './pages/FeesStructure';
-import FeesPayment from './pages/FeesPayment';
-import StudentFees from './pages/StudentFees';
-import StuLibrary from './pages/StuLibrary';
-import LibraryDash from './pages/LibraryDash';
-import StudentReport from './pages/StudentReport';
 import Menus from './pages/Menus';
 import Checkpoints from './pages/Checkpoints';
-import Form from './pages/Form';
-import Tendor from './pages/Tendor';
+import Tender from './pages/Tender';
+import Buyer from './pages/Buyer';
+import ViewTender from './pages/ViewTender';
+import Participant from './pages/Participant';
 function App() {
    useEffect(() => {
         const handleRightClick = (event) => {
@@ -52,26 +43,19 @@ function App() {
             <Route path="/attendance" element={<PrivateRoute element={Attendance} />} />
             <Route path="/notification" element={<PrivateRoute element={Notification} />} />
             <Route path="/leave" element={<PrivateRoute element={Leave} />} />
-            {/* <Route path="/admissions" element={<PrivateRoute element={Admission} />} /> */}
-            <Route path="/admissions/view/:activityId" element={<PrivateRoute element={ViewAdmission} />} />
-            <Route path="/admissions/finalize" element={<PrivateRoute element={AdmissionFinal} />} />
-            <Route path="/profile" element={<PrivateRoute element={EmpProfile} />} />
-            <Route path="/report" element={<PrivateRoute element={StudentReport} />} />
-            <Route path="/library" element={<PrivateRoute element={Library} />} />
-            <Route path="/library-dashboard" element={<PrivateRoute element={LibraryDash} />} />
-            <Route path="/student/library/:studentId" element={<PrivateRoute element={StuLibrary} />} />
-            <Route path="/fee-structure" element={<PrivateRoute element={FeesStructure} />} />
-            <Route path="/fees-payment" element={<PrivateRoute element={FeesPayment} />} />
-            <Route path="/fees/:studentId" element={<PrivateRoute element={StudentFees} />} />
 
+            <Route path="/tender" element={<PrivateRoute element={Tender} />} />
+            <Route path="/draft" element={<PrivateRoute element={Tender} />} />
+            <Route path="/create-tender" element={<PrivateRoute element={Tender} />} />
+            <Route path="/edit-draft/:ActivityId" element={<PrivateRoute element={Tender} />} />
+            <Route path="/tender/view/:activityId" element={<PrivateRoute element={ViewTender} />} />
 
+            <Route path="/buyer" element={<PrivateRoute element={Buyer} />} />
+            <Route path="/new-buyer" element={<PrivateRoute element={Buyer} />} />
 
-
-            <Route path="/tender" element={<PrivateRoute element={Tendor} />} />
-
-            <Route path="/create-tender" element={<PrivateRoute element={Tendor} />} />
-
-            {/* Optional Routes */}
+            <Route path="/participant" element={<PrivateRoute element={Participant} />} />
+            <Route path="/new-participant" element={<PrivateRoute element={Participant} />} />
+            
             <Route path="/menus" element={<PrivateRoute element={Menus} />} />
             <Route path="/add-menu" element={<PrivateRoute element={Menus} />} />
 

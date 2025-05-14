@@ -40,7 +40,9 @@ function Sidebar() {
     const defaultRoutes = [
         // { path: '/admissions', name: 'Admissions', icon: <AddHomeWorkIcon /> },
         // { path: '/notification', name: 'Notification', icon: <Notifications /> }
-
+ { path: '/tender', name: 'Tender', icon: <DynamicFormIcon /> },
+            { path: '/buyer', name: 'Buyer List', icon: <Person /> },
+            { path: '/participant', name: 'Participant List', icon: <Person /> },
     ];
 
     const userModules = user?.modules || [];
@@ -53,8 +55,9 @@ function Sidebar() {
             // { path: '/report', name: 'Report', icon: <SummarizeIcon /> },
             //  { path: '/menus', name: 'Menus', icon: <MenuIcon /> },
             // { path: '/checkpoints', name: 'Checkpoints', icon: <ChecklistIcon /> },
-        { path: '/tender', name: 'Tender', icon: <DynamicFormIcon /> },
+           
         );
+        
     }
 
     // If module 5 (Visit) exists, also add Maps
@@ -93,7 +96,7 @@ function Sidebar() {
                         to={route.path}
                         selected={location.pathname === route.path}
                         key={index}
-                        sx={{
+                       sx={{
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
@@ -107,7 +110,7 @@ function Sidebar() {
                         <ListItemIcon sx={{ color: 'black', minWidth: 'auto' }}>
                             {route.icon}
                         </ListItemIcon>
-                        <Typography variant="caption" sx={{ mt: 0.5 }}>
+                        <Typography variant="caption" sx={{textAlign: 'center' }}>
                             {route.name}
                         </Typography>
                     </ListItem>

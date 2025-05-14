@@ -2,9 +2,10 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { Box, useMediaQuery } from '@mui/material';
-import TempAdmissionView from '../components/admission/TempAdmissionView';
+import BuyerList from '../components/buyer/BuyerList';
+import AddNewBuyer from '../components/buyer/AddNewBuyer';
 
-function ViewAdmission() {
+function Buyer() {
     const isMobile = useMediaQuery('(max-width:600px)');
     const drawerWidth = isMobile ? 0 : 100;
 
@@ -16,12 +17,16 @@ function ViewAdmission() {
             </Box>
             <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
                 <Navbar />
-                <Box sx={{ mt: 0, p: 1 }}>
-                    <TempAdmissionView/>
+                <Box sx={{ mt: 1, p: 1 }}>
+                   
+                    {window.location.href.includes('/buyer') && <BuyerList />} 
+                    {window.location.href.includes('/new-buyer') && <AddNewBuyer />} 
+                   
+                                  
                 </Box>
             </Box>
         </Box>
     );
 }
 
-export default ViewAdmission;
+export default Buyer;
