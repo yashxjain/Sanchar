@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 
 function BuyerList() {
   const [tempRecords, setTempRecords] = useState([]);
@@ -100,6 +99,7 @@ function BuyerList() {
             sx={{ width: 300 }}
           />
 
+          
           <Button
             variant="contained"
             style={{ backgroundColor: "#F69320" }}

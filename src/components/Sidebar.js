@@ -17,6 +17,7 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import HRSmileLogo from "../assets/images (1).png";
 import MenuBookIcon from "@mui/icons-material/MenuBook"; // Import the icon
 import DynamicFormIcon from '@mui/icons-material/DynamicForm';
+import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 // import ChecklistIcon from '@mui/icons-material/Checklist';
 // import MenuIcon from '@mui/icons-material/Menu';
 function Sidebar() {
@@ -41,7 +42,8 @@ function Sidebar() {
         // { path: '/admissions', name: 'Admissions', icon: <AddHomeWorkIcon /> },
         // { path: '/notification', name: 'Notification', icon: <Notifications /> }
  { path: '/tender', name: 'Tender', icon: <DynamicFormIcon /> },
-            { path: '/buyer', name: 'Buyer List', icon: <Person /> },
+        { path: '/buyer', name: 'Buyer List', icon: <Person /> },
+            { path: '/directory', name: 'Cotact Person List', icon: <ContactPhoneIcon /> },
             { path: '/participant', name: 'Participant List', icon: <Person /> },
     ];
 

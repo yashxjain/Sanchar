@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar';
 import { Box, useMediaQuery, Container, Grid } from '@mui/material';
 import EmployeeProfile from '../components/employee/UserProfile';
 
-function EmpProfile() {
+function User() {
     const isMobile = useMediaQuery('(max-width:600px)');
     const drawerWidth = isMobile ? 0 : 100;
 
@@ -31,4 +31,4 @@ function EmpProfile() {
     );
 }
 
-export default EmpProfile;
+export default User;

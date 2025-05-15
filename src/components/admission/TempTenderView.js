@@ -72,90 +72,7 @@ function TempTenderView() {
     return item ? item.Value : "";
   };
 
-  const handleNext = async () => {
-    const fieldMap = {
-      3: "CandidateName",
-      4: "Photo",
-      5: "Course",
-      6: "GuardianName",
-      7: "StudentContactNo",
-      8: "GuardianContactNo",
-      9: "EmailId",
-      10: "BloodGroup",
-      11: "Gender",
-      12: "DOB",
-      13: "ReligionCategory",
-      15: "PermanentAddress",
-      16: "PresentAddress",
-      18: "Board10University",
-      19: "Year10Passing",
-      22: "Percentage10",
-      21: "Board12University",
-      24: "Year12PassingAlt",
-      27: "Percentage12",
-      24: "Council12Name",
-      25: "Year12Passing",
-      26: "RollNo12",
-      27: "Stream12",
-      28: "InterestInHostel",
-      29: "InterestInTransport",
-      31: "CharacterCertificate",
-      33: "MigrationCertificate",
-      35: "CollegeLeavingCertificate",
-      37: "MarksheetCopy",
-      38: "AadharCardCopy",
-      39: "AadharNumber",
-      40: "AadharPhoto",
-      // Add more mappings if required
-    };
-
-    const studentData = {
-      StudentID: `STU-${activityId}`, // Or generate your logic
-      TempID: activityId,
-      SubmissionDate: new Date().toISOString().split("T")[0],
-      Place: "Bhubaneswar", // Example value
-      Remark: "", // Optional
-    };
-
-    details.forEach((item) => {
-      const fieldName = fieldMap[item.ChkId];
-      if (fieldName) {
-        studentData[fieldName] = item.Value;
-      }
-    });
-
-    console.log("Sending payload:", studentData);
-
-    try {
-      const response = await axios.post(
-        "https://namami-infotech.com/SANCHAR/src/students/add_student.php",
-        studentData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (response.data.success) {
-        const studentId = response.data.data.StudentID;
-        const course = studentData.Course;
-        // Save to localStorage
-        localStorage.setItem("student_id", studentId);
-        localStorage.setItem("student_course", course);
-        alert("Student record saved successfully.");
-        navigate("/admissions/finalize", {
-          state: { studentId, course },
-        });
-      } else {
-        alert("Error: " + response.data.message);
-      }
-    } catch (error) {
-      console.error("Submission error:", error);
-      alert("Failed to submit student data.");
-    }
-  };
-
+  
   const renderStudentDetails = () => {
     const fields = candidateDetailsIds.map((id) => ({
       label: checkpoints[id] || `Checkpoint #${id}`,
@@ -366,15 +283,13 @@ function TempTenderView() {
           zIndex: 1000,
         }}
       >
-        <Button variant="contained" sx={{ backgroundColor: "#F69320" }}>
-          CLOSE
-        </Button>
+        
         <Button
           variant="contained"
           sx={{ backgroundColor: "#F69320" }}
-          onClick={handleNext}
+          
         >
-          START
+          Move to LOA
         </Button>
       </Box>
     </Box>

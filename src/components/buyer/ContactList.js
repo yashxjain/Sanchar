@@ -13,26 +13,30 @@ import {
   TextField,
   Box,
   Button,
+  Autocomplete,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 
-function DraftList() {
+function ContactList() {
   const [tempRecords, setTempRecords] = useState([]);
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const navigate = useNavigate();
+
+  // Options for Type filter
+  const typeOptions = ["Zone", "Division", "Station"];
 
   useEffect(() => {
     const fetchTempData = async () => {
       try {
         const response = await axios.get(
-          "https://namami-infotech.com/SANCHAR/src/menu/get_temp_draft.php?menuId=1",
+          "https://namami-infotech.com/SANCHAR/src/buyer/contact_station_list.php"
         );
         if (response.data.success) {
           setTempRecords(response.data.data);
@@ -49,35 +53,44 @@ function DraftList() {
     fetchTempData();
   }, []);
 
+  // Apply filters: searchTerm + typeFilter
+  useEffect(() => {
+    let filtered = tempRecords;
+
+    // Filter by Type if selected
+    if (typeFilter) {
+      filtered = filtered.filter(
+        (record) => record.Type?.toLowerCase() === typeFilter.toLowerCase()
+      );
+    }
+
+    // Filter by searchTerm
+    if (searchTerm) {
+      const value = searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (record) =>
+          record.ZoneID?.toString().toLowerCase().includes(value) ||
+          record.ZoneName?.toLowerCase().includes(value) ||
+          record.DivisionID?.toString().toLowerCase().includes(value) ||
+          record.DivisionName?.toLowerCase().includes(value) ||
+          record.StationID?.toString().toLowerCase().includes(value) ||
+          record.StationName?.toLowerCase().includes(value)
+      );
+    }
+
+    setFilteredRecords(filtered);
+    setPage(0);
+  }, [searchTerm, typeFilter, tempRecords]);
+
   const handleSearch = (e) => {
-  const value = e.target.value.toLowerCase();
-  setSearchTerm(value);
-  const filtered = tempRecords.filter((record) => {
-    const nameEntry = record.chkData?.find((chk) => chk.ChkId === 3);
-    const tenderno = nameEntry?.Value?.toLowerCase() || "";
-    const nameEntry2 = record.chkData?.find((chk) => chk.ChkId === 6);
-    const name = nameEntry2?.Value?.toLowerCase() || "";
-
-    return tenderno.includes(value) || name.includes(value);
-  });
-  setFilteredRecords(filtered);
-  setPage(0);
-};
-
+    setSearchTerm(e.target.value);
+  };
 
   const handleChangePage = (event, newPage) => setPage(newPage);
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
-
-  const formatDate = (datetime) => {
-    const dateObj = new Date(datetime);
-    const day = String(dateObj.getDate()).padStart(2, "0");
-    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-    const year = dateObj.getFullYear();
-    return `${day}/${month}/${year}`;
   };
 
   if (loading) return <CircularProgress />;
@@ -90,26 +103,40 @@ function DraftList() {
         justifyContent="space-between"
         alignItems="center"
         mb={2}
+        flexWrap="wrap"
+        gap={2}
       >
         <Typography variant="h5" fontWeight="bold">
-          Tender List
+          Contact List
         </Typography>
 
-        <Box display="flex" gap={2}>
+        <Box display="flex" gap={2} flexWrap="wrap" alignItems="center">
+          <Autocomplete
+            options={typeOptions}
+            value={typeFilter}
+            onChange={(event, newValue) => setTypeFilter(newValue)}
+            renderInput={(params) => (
+              <TextField {...params} label="Filter by Type" size="small" />
+            )}
+            sx={{ width: 180 }}
+            clearOnEscape
+          />
+
           <TextField
-            label="Search by Tender No. or Buyer Name"
+            label="Search by Station ID or Name"
             variant="outlined"
             size="small"
             value={searchTerm}
             onChange={handleSearch}
             sx={{ width: 300 }}
           />
+
           <Button
             variant="contained"
             style={{ backgroundColor: "#F69320" }}
-            onClick={() => navigate("/tender")}
+            onClick={() => navigate("/contact")}
           >
-            Tenders List
+            Add Contact
           </Button>
         </Box>
       </Box>
@@ -118,38 +145,24 @@ function DraftList() {
         <Table size="small">
           <TableHead sx={{ backgroundColor: "#F69320" }}>
             <TableRow>
-              <TableCell sx={{ color: "white" }}>Tender No.</TableCell>
-              <TableCell sx={{ color: "white" }}>Buyer</TableCell>
-                          <TableCell sx={{ color: "white" }}>Date</TableCell>
-                          <TableCell sx={{ color: "white" }}>Last Update</TableCell>
-              <TableCell sx={{ color: "white" }}>Actions</TableCell>
+              <TableCell sx={{ color: "white" }}>Type </TableCell>
+              <TableCell sx={{ color: "white" }}>Type ID</TableCell>
+              <TableCell sx={{ color: "white" }}>Contact Person</TableCell>
+              <TableCell sx={{ color: "white" }}>Mobile</TableCell>
+              <TableCell sx={{ color: "white" }}>Mail</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredRecords
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((record) => {
-                const nameEntry = record.chkData?.find(
-                  (chk) => chk.ChkId === 3,
-                );
-                const nameEntry2 = record.chkData?.find(
-                  (chk) => chk.ChkId === 6,
-                );
                 return (
                   <TableRow key={record.ID} hover>
-                    <TableCell>{nameEntry?.Value || "-"}</TableCell>
-                    <TableCell>{nameEntry2?.Value || "-"}</TableCell>
-                        <TableCell>{formatDate(record.Datetime)}</TableCell>
-                         <TableCell>{(record.LastUpdate)}</TableCell>
-                    <TableCell>
-                      <VisibilityIcon
-                        color="primary"
-                        sx={{ cursor: "pointer" }}
-                        onClick={() =>
-                          navigate(`/edit-draft/${record.ActivityId}`)
-                        }
-                      />
-                    </TableCell>
+                    <TableCell>{record.Type}</TableCell>
+                    <TableCell>{record.TypeId}</TableCell>
+                    <TableCell>{record.ContactPerson}</TableCell>
+                    <TableCell>{record.ContactNumber}</TableCell>
+                    <TableCell>{record.ContactMail}</TableCell>
                   </TableRow>
                 );
               })}
@@ -170,4 +183,4 @@ function DraftList() {
   );
 }
 
-export default DraftList;
+export default ContactList;

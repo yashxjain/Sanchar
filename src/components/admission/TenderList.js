@@ -32,7 +32,7 @@ function TenderList() {
     const fetchTempData = async () => {
       try {
         const response = await axios.get(
-          "https://namami-infotech.com/SANCHAR/src/menu/get_temp.php",
+          "https://namami-infotech.com/SANCHAR/src/menu/get_temp.php?menuId=1",
         );
         if (response.data.success) {
           setTempRecords(response.data.data);
@@ -50,17 +50,20 @@ function TenderList() {
   }, []);
 
   const handleSearch = (e) => {
-    const value = e.target.value.toLowerCase();
-    setSearchTerm(value);
-    const filtered = tempRecords.filter((record) => {
-      const nameEntry = record.chkData?.find((chk) => chk.ChkId === 3);
-      const name = nameEntry?.Value?.toLowerCase() || "";
-      const tempId = record.TempId?.toLowerCase() || "";
-      return tempId.includes(value) || name.includes(value);
-    });
-    setFilteredRecords(filtered);
-    setPage(0);
-  };
+  const value = e.target.value.toLowerCase();
+  setSearchTerm(value);
+  const filtered = tempRecords.filter((record) => {
+    const nameEntry = record.chkData?.find((chk) => chk.ChkId === 3);
+    const tenderno = nameEntry?.Value?.toLowerCase() || "";
+    const nameEntry2 = record.chkData?.find((chk) => chk.ChkId === 6);
+    const name = nameEntry2?.Value?.toLowerCase() || "";
+
+    return tenderno.includes(value) || name.includes(value);
+  });
+  setFilteredRecords(filtered);
+  setPage(0);
+};
+
 
   const handleChangePage = (event, newPage) => setPage(newPage);
 
@@ -94,7 +97,7 @@ function TenderList() {
 
         <Box display="flex" gap={2}>
           <TextField
-            label="Search by Tender ID or Name"
+            label="Search by Tender No. or Buyer Name"
             variant="outlined"
             size="small"
             value={searchTerm}
@@ -122,8 +125,8 @@ function TenderList() {
         <Table size="small">
           <TableHead sx={{ backgroundColor: "#F69320" }}>
             <TableRow>
-              <TableCell sx={{ color: "white" }}>Tender ID</TableCell>
-              <TableCell sx={{ color: "white" }}>Name</TableCell>
+              <TableCell sx={{ color: "white" }}>Tender No.</TableCell>
+              <TableCell sx={{ color: "white" }}>Buyer</TableCell>
               <TableCell sx={{ color: "white" }}>Date</TableCell>
               <TableCell sx={{ color: "white" }}>Actions</TableCell>
             </TableRow>
@@ -135,10 +138,13 @@ function TenderList() {
                 const nameEntry = record.chkData?.find(
                   (chk) => chk.ChkId === 3,
                 );
+                const nameEntry2 = record.chkData?.find(
+                  (chk) => chk.ChkId === 6,
+                );
                 return (
                   <TableRow key={record.ID} hover>
-                    <TableCell>{record.TempId}</TableCell>
                     <TableCell>{nameEntry?.Value || "-"}</TableCell>
+                    <TableCell>{nameEntry2?.Value || "-"}</TableCell>
                     <TableCell>{formatDate(record.Datetime)}</TableCell>
                     <TableCell>
                       <VisibilityIcon

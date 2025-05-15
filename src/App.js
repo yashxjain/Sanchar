@@ -18,6 +18,7 @@ import Tender from './pages/Tender';
 import Buyer from './pages/Buyer';
 import ViewTender from './pages/ViewTender';
 import Participant from './pages/Participant';
+import User from './pages/User';
 function App() {
    useEffect(() => {
         const handleRightClick = (event) => {
@@ -43,6 +44,7 @@ function App() {
             <Route path="/attendance" element={<PrivateRoute element={Attendance} />} />
             <Route path="/notification" element={<PrivateRoute element={Notification} />} />
             <Route path="/leave" element={<PrivateRoute element={Leave} />} />
+            <Route path="/profile" element={<PrivateRoute element={User} />} />
 
             <Route path="/tender" element={<PrivateRoute element={Tender} />} />
             <Route path="/draft" element={<PrivateRoute element={Tender} />} />
@@ -52,7 +54,9 @@ function App() {
 
             <Route path="/buyer" element={<PrivateRoute element={Buyer} />} />
             <Route path="/new-buyer" element={<PrivateRoute element={Buyer} />} />
-
+            <Route path="/contact" element={<PrivateRoute element={Buyer} />} />
+            <Route path="/directory" element={<PrivateRoute element={Buyer} />} />
+            
             <Route path="/participant" element={<PrivateRoute element={Participant} />} />
             <Route path="/new-participant" element={<PrivateRoute element={Participant} />} />
             
