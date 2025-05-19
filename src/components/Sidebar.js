@@ -41,10 +41,11 @@ function Sidebar() {
     const defaultRoutes = [
         // { path: '/admissions', name: 'Admissions', icon: <AddHomeWorkIcon /> },
         // { path: '/notification', name: 'Notification', icon: <Notifications /> }
- { path: '/tender', name: 'Tender', icon: <DynamicFormIcon /> },
+        { path: '/tender', name: 'Tender', icon: <DynamicFormIcon /> },
+        // { path: '/loa', name: 'Letter Of Allotment', icon: <ChecklistIcon /> },
         { path: '/buyer', name: 'Buyer List', icon: <Person /> },
-            { path: '/directory', name: 'Cotact Person List', icon: <ContactPhoneIcon /> },
-            { path: '/participant', name: 'Participant List', icon: <Person /> },
+        { path: '/directory', name: 'Cotact Person List', icon: <ContactPhoneIcon /> },
+        { path: '/participant', name: 'Participant List', icon: <Person /> },
     ];
 
     const userModules = user?.modules || [];

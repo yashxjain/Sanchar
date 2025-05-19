@@ -19,6 +19,8 @@ import Buyer from './pages/Buyer';
 import ViewTender from './pages/ViewTender';
 import Participant from './pages/Participant';
 import User from './pages/User';
+import LOA from './pages/LOA';
+import ViewLOA from './pages/ViewLOA';
 function App() {
    useEffect(() => {
         const handleRightClick = (event) => {
@@ -51,6 +53,12 @@ function App() {
             <Route path="/create-tender" element={<PrivateRoute element={Tender} />} />
             <Route path="/edit-draft/:ActivityId" element={<PrivateRoute element={Tender} />} />
             <Route path="/tender/view/:activityId" element={<PrivateRoute element={ViewTender} />} />
+            <Route path="/loa/view/:activityId" element={<PrivateRoute element={ViewLOA} />} />
+
+            <Route path="/loa" element={<PrivateRoute element={LOA} />} />
+            <Route path="/draft-list" element={<PrivateRoute element={LOA} />} />
+            <Route path="/create-loa" element={<PrivateRoute element={LOA} />} />
+            <Route path="/edit-loa/:ActivityId" element={<PrivateRoute element={LOA} />} />
 
             <Route path="/buyer" element={<PrivateRoute element={Buyer} />} />
             <Route path="/new-buyer" element={<PrivateRoute element={Buyer} />} />

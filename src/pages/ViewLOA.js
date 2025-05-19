@@ -2,9 +2,9 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { Box, useMediaQuery } from '@mui/material';
-import TempTenderView from '../components/tender/TempTenderView';
+import TempLOAView from '../components/loa/TempLOAView';
 
-function ViewTender() {
+function ViewLOA() {
     const isMobile = useMediaQuery('(max-width:600px)');
     const drawerWidth = isMobile ? 0 : 100;
 
@@ -17,11 +17,11 @@ function ViewTender() {
             <Box component="main" sx={{ flexGrow: 1, p: 0 }}>
                 <Navbar />
                 <Box sx={{ mt: 0, p: 1 }}>
-                    <TempTenderView/>
+                    <TempLOAView/>
                 </Box>
             </Box>
         </Box>
     );
 }
 
-export default ViewTender;
+export default ViewLOA;

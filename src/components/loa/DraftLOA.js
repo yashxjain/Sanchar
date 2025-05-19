@@ -18,7 +18,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-function DraftList() {
+function DraftLOA() {
   const [tempRecords, setTempRecords] = useState([]);
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +32,7 @@ function DraftList() {
     const fetchTempData = async () => {
       try {
         const response = await axios.get(
-          "https://namami-infotech.com/SANCHAR/src/menu/get_temp_draft.php?menuId=1",
+          "https://namami-infotech.com/SANCHAR/src/menu/get_temp_draft.php?menuId=2",
         );
         if (response.data.success) {
           setTempRecords(response.data.data);
@@ -92,7 +92,7 @@ function DraftList() {
         mb={2}
       >
         <Typography variant="h5" fontWeight="bold">
-          Tender List
+          LOA Draft List
         </Typography>
 
         <Box display="flex" gap={2}>
@@ -107,9 +107,9 @@ function DraftList() {
           <Button
             variant="contained"
             style={{ backgroundColor: "#F69320" }}
-            onClick={() => navigate("/tender")}
+            onClick={() => navigate("/loa")}
           >
-            Tenders List
+            LOA List
           </Button>
         </Box>
       </Box>
@@ -146,7 +146,7 @@ function DraftList() {
                         color="primary"
                         sx={{ cursor: "pointer" }}
                         onClick={() =>
-                          navigate(`/edit-draft/${record.ActivityId}`)
+                          navigate(`/edit-loa/${record.ActivityId}`)
                         }
                       />
                     </TableCell>
@@ -170,4 +170,4 @@ function DraftList() {
   );
 }
 
-export default DraftList;
+export default DraftLOA;

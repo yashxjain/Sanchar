@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-function AdmissionFormLogic() {
+function LOAForm() {
   const [pages, setPages] = useState([]);
   const [checkpoints, setCheckpoints] = useState([]);
   const [types, setTypes] = useState([]);
@@ -48,7 +48,7 @@ function AdmissionFormLogic() {
           "https://namami-infotech.com/SANCHAR/src/menu/get_types.php",
         );
 
-        const checkpointIds = menuRes.data.data[0].CheckpointId.split(";").map(
+        const checkpointIds = menuRes.data.data[1].CheckpointId.split(";").map(
           (p) => p.split(",").map((id) => parseInt(id)),
         );
 
@@ -307,7 +307,7 @@ function AdmissionFormLogic() {
   };
 
   const handleSubmit = async (isDraft = false) => {
-    const menuId = 1;
+    const menuId = 2;
     const date = new Date();
     const dateTime = date.toISOString().slice(0, 19).replace("T", " ");
 
@@ -329,7 +329,7 @@ function AdmissionFormLogic() {
               const base64 = await convertToBase64(value);
               imageData[id] = base64;
             }
-            continue; // Skip adding to textData
+            continue;
           }
 
           if (
@@ -376,7 +376,7 @@ function AdmissionFormLogic() {
               : "Form submitted successfully!",
             "success",
           );
-          navigate("/tender");
+          navigate("/loa");
         } catch (error) {
           console.error("Submission error", error);
           Swal.fire("Error", "Submission failed", "error");
@@ -403,15 +403,8 @@ const handlePrevious = () => {
           mb: 2,
         }}
       >
-        <Typography variant="h5">
-  {currentPage >= 3 ? "Letter Of Allotment" : "Tender Application Form"}
-</Typography>
-<Typography variant="body2">
-  {currentPage >= 3
-    ? "Please complete the Letter Of Allotment details"
-    : "Please complete all sections"}
-</Typography>
-
+        <Typography variant="h5">Letter Of Allotment Form</Typography>
+        <Typography variant="body2">Please complete all sections</Typography>
       </Box>
 
       <Stepper activeStep={currentPage} alternativeLabel sx={{ mb: 2 }}>
@@ -527,4 +520,4 @@ const handlePrevious = () => {
   );
 }
 
-export default AdmissionFormLogic;
+export default LOAForm;

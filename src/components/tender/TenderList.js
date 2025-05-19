@@ -116,7 +116,7 @@ function TenderList() {
             style={{ backgroundColor: "#F69320" }}
             onClick={() => navigate("/create-tender")}
           >
-            Create New Tender
+             New Tender
           </Button>
         </Box>
       </Box>

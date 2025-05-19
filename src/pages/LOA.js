@@ -2,12 +2,12 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { Box, useMediaQuery } from '@mui/material';
-import TenderList from '../components/tender/TenderList';
-import AdmissionFormLogic from '../components/form/AdmissionFormLogic';
-import DraftList from '../components/tender/DraftList';
-import EditDraft from '../components/form/EditDraft';
+import LOAList from '../components/loa/LOAList';
+import LOAForm from '../components/loa/LOAForm';
+import DraftLOA from '../components/loa/DraftLOA';
+import EditDraftLOA from '../components/loa/EditDraftLOA';
 
-function Tender() {
+function LOA() {
     const isMobile = useMediaQuery('(max-width:600px)');
     const drawerWidth = isMobile ? 0 : 100;
 
@@ -21,10 +21,10 @@ function Tender() {
                 <Navbar />
                 <Box sx={{ mt: 1, p: 1 }}>
                    
-                    {window.location.href.includes('/tender') && <TenderList />} 
-                    {window.location.href.includes('/draft') && <DraftList />} 
-                    {window.location.href.includes('/create-tender') && <AdmissionFormLogic />} 
-                    {window.location.href.includes('/edit-draft') && <EditDraft/>} 
+                    {window.location.href.includes('/loa') && <LOAList />} 
+                    {window.location.href.includes('/draft-list') && <DraftLOA />} 
+                    {window.location.href.includes('/create-loa') && <LOAForm />} 
+                    {window.location.href.includes('/edit-loa') && <EditDraftLOA/>} 
                                   
                 </Box>
             </Box>
@@ -32,4 +32,4 @@ function Tender() {
     );
 }
 
-export default Tender;
+export default LOA;
