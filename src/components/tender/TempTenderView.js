@@ -27,9 +27,8 @@ function TempTenderView() {
   // Checkpoint groups
   const sections = {
     "Participants Details": [15, 16],
-    "Winner Tender": [17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],
-    "List of Attached Documents": [31, 33, 35, 37, 38, 39, 40],
-    Prefrences: [28, 29],
+    "Winner Tender": [17, 18, 20, 21, 22, 23, 24, 25, 26, 27],
+    "LOA": [28,29,30,31,32,63,64,65,66,67,68,69,70,71,72,73,81,82],
   };
 
   const candidateDetailsIds = [1,3, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -73,151 +72,131 @@ function TempTenderView() {
   };
 
   
-  const renderStudentDetails = () => {
-    const fields = candidateDetailsIds.map((id) => ({
+ // ... imports and setup remain unchanged ...
+
+ const renderStudentDetails = () => {
+  const fields = candidateDetailsIds.map((id) => {
+    const value = getValueByChkId(id);
+    return {
       label: checkpoints[id] || `Checkpoint #${id}`,
-      value: getValueByChkId(id),
-      isImage:
-        id === studentPhotoChkId &&
-        getValueByChkId(id).startsWith("https://namami-infotech.com/"),
-    }));
+      value,
+    };
+  });
 
-    const imageItem = fields.find((f) => f.isImage);
-    const otherFields = fields.filter((f) => !f.isImage);
-
-    return (
-      <Grid container spacing={2} sx={{ mb: 4 }}>
+  return (
+    <Box sx={{ border: "1px solid #ccc", borderRadius: 2, mb: 4, p: 2 }}>
+      <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+        Tender Participant Details
+      </Typography>
+      <Divider sx={{ mb: 2 }} />
+      <Grid container spacing={2}>
+        {/* Photo Column */}
         <Grid item xs={12} sm={3} sx={{ textAlign: "center" }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              mb: 2,
-              width: "100%",
-              flexDirection: "column",
-              gap: 1
-            }}
-          >
-            <Box
-              component="img"
-              src={getValueByChkId(studentPhotoChkId)}
-              alt="Student"
-              sx={{
-                width: "180px",
-                height: "180px",
-                objectFit: "fill",
-                borderRadius: 2,
-                border: "1px solid #ccc",
-                boxShadow: 2,
-              }}
-            />
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  Tender Image
-                </Typography>
-          </Box>
+          <Avatar
+            alt="Tender Image"
+            src={getValueByChkId(studentPhotoChkId)}
+            variant="rounded"
+            sx={{ width: 120, height: 120, mx: "auto", mb: 1 }}
+          />
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            Tender Image
+          </Typography>
         </Grid>
+
+        {/* Details Column */}
         <Grid item xs={12} sm={9}>
           <Grid container spacing={2}>
-            {otherFields.map((f, idx) => (
-              <Grid item xs={12} sm={4} key={idx}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  {f.label}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  {f.value || "—"}
-                </Typography>
-              </Grid>
-            ))}
+          {fields
+  .filter((f) => !f.isNamamiLink || f.label !== checkpoints[studentPhotoChkId])
+  .map((f, idx) => (
+    <Grid item xs={12} sm={4} key={idx}>
+      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+        {f.label}
+      </Typography>
+      {f.isNamamiLink ? (
+        <Button
+          variant="outlined"
+          color="primary"
+          sx={{ mt: 1 }}
+          onClick={() => window.open(f.value, "_blank")}
+        >
+          View
+        </Button>
+      ) : (
+        <Typography variant="body1" sx={{ mb: 1 }}>
+          {f.value || "—"}
+        </Typography>
+      )}
+    </Grid>
+))}
+
           </Grid>
         </Grid>
       </Grid>
-    );
+    </Box>
+  );
+};
+
+
+const renderSection = (title, checkpointIds) => {
+  const sectionData = details.filter((item) => {
+    const baseId = parseInt(item.ChkId.toString().split("_")[0]);
+    return checkpointIds.includes(baseId);
+  });
+
+  if (sectionData.length === 0) return null;
+
+  const getLabel = (chkId) => {
+    if (chkId.includes("_")) {
+      const [parentId, childId] = chkId.split("_");
+      const parentLabel = checkpoints[parentId] || `Checkpoint #${parentId}`;
+      const childLabel = checkpoints[childId] || `Checkpoint #${childId}`;
+      return `${childLabel} (${parentLabel})`;
+    } else {
+      return checkpoints[chkId] || `Checkpoint #${chkId}`;
+    }
   };
 
-  const renderSection = (title, checkpointIds) => {
-    const sectionData = details.filter((item) =>
-      checkpointIds.includes(parseInt(item.ChkId)),
-    );
-    if (sectionData.length === 0) return null;
+  return (
+    <Box key={title} sx={{ border: "1px solid #ccc", borderRadius: 2, mb: 4, p: 2 }}>
+      <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+        {title}
+      </Typography>
+      <Divider sx={{ mb: 2 }} />
+      <Grid container spacing={2}>
+        {sectionData.map((item, index) => {
+          const isImage =
+            typeof item.Value === "string" &&
+            item.Value.startsWith("https://namami-infotech.com/") &&
+            (item.Value.endsWith(".jpg") || item.Value.endsWith(".png") || item.Value.endsWith(".jpeg"));
 
-    return (
-      <Box key={title} sx={{ mb: 5 }}>
-        <Typography
-          variant="h6"
-          gutterBottom
-          sx={{ color: "#F69320", fontWeight: 700 }}
-        >
-          {title}
-        </Typography>
-        <Divider sx={{ mb: 2 }} />
-        <Grid container spacing={2}>
-          {sectionData.map((item, index) => {
-            const isImage =
-              typeof item.Value === "string" &&
-              item.Value.startsWith("https://namami-infotech.com/");
-            return (
-              <Grid item xs={12} sm={3} key={index}>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  {checkpoints[item.ChkId] || `Checkpoint #${item.ChkId}`}
+          return (
+            <Grid item xs={12} sm={6} key={index}>
+              <Box sx={{ mb: 1 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ color: "#555", fontWeight: 600 }}
+                >
+                  {getLabel(item.ChkId)}
                 </Typography>
                 {isImage ? (
-                  <Box
-                    sx={{ mt: 1, cursor: "pointer" }}
-                    onClick={() => {
-                      setSelectedImage(item.Value);
-                      setOpenDialog(true);
-                    }}
-                  >
-                    <img
-                      src={item.Value}
-                      alt={`Checkpoint ${item.ChkId}`}
-                      style={{
-                        width: "50%",
-                        height: "150px",
-                        objectFit: "cover",
-                        borderRadius: 8,
-                        border: "1px solid #ccc",
-                      }}
-                    />
-                  </Box>
+                  <Avatar
+                    variant="rounded"
+                    src={item.Value}
+                    sx={{ width: 120, height: 120, mt: 1 }}
+                  />
                 ) : (
-                  <Typography variant="body1" sx={{ mb: 1.5 }}>
-                    {item.Value || "—"}
-                  </Typography>
+                  <Typography variant="body1">{item.Value || "—"}</Typography>
                 )}
-              </Grid>
-            );
-          })}
-        </Grid>
+              </Box>
+            </Grid>
+          );
+        })}
+      </Grid>
+    </Box>
+  );
+};
 
-        {/* Dialog for Image Preview */}
-        <Dialog
-          open={openDialog}
-          onClose={() => setOpenDialog(false)}
-          maxWidth="md"
-        >
-          <Box sx={{ p: 2, textAlign: "center" }}>
-            <img
-              src={selectedImage}
-              alt="Preview"
-              style={{ maxWidth: "100%", maxHeight: "60vh", borderRadius: 8 }}
-            />
-            <Box sx={{ mt: 2 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                href={selectedImage}
-                download
-              >
-                Download Image
-              </Button>
-            </Box>
-          </Box>
-        </Dialog>
-      </Box>
-    );
-  };
 
   if (loading) return <CircularProgress sx={{ mt: 5 }} />;
   if (error)
@@ -257,7 +236,8 @@ function TempTenderView() {
       </Box>
 
       {/* Main Paper */}
-      <Paper sx={{ p: 4, borderRadius: 3, boxShadow: 4 }}>
+      <Paper sx={{ p: 4, borderRadius: 2, boxShadow: 1, backgroundColor: "#fafafa" }}>
+
         {/* Student Details */}
         {renderStudentDetails()}
 
@@ -266,32 +246,6 @@ function TempTenderView() {
           renderSection(sectionTitle, ids),
         )}
       </Paper>
-
-      {/* Fixed Footer: ONLY Next Button */}
-      <Box
-        sx={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          p: 2,
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: "100px",
-          backgroundColor: "#fff",
-          boxShadow: "0 -2px 8px rgba(0,0,0,0.05)",
-          zIndex: 1000,
-        }}
-      >
-        
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: "#F69320" }}
-          
-        >
-          Move to LOA
-        </Button>
-      </Box>
     </Box>
   );
 }

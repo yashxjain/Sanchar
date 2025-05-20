@@ -119,6 +119,7 @@ function DraftList() {
           <TableHead sx={{ backgroundColor: "#F69320" }}>
             <TableRow>
               <TableCell sx={{ color: "white" }}>Tender No.</TableCell>
+              <TableCell sx={{ color: "white" }}>LOA No.</TableCell>
               <TableCell sx={{ color: "white" }}>Buyer</TableCell>
                           <TableCell sx={{ color: "white" }}>Date</TableCell>
                           <TableCell sx={{ color: "white" }}>Last Update</TableCell>
@@ -129,15 +130,14 @@ function DraftList() {
             {filteredRecords
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((record) => {
-                const nameEntry = record.chkData?.find(
-                  (chk) => chk.ChkId === 3,
-                );
-                const nameEntry2 = record.chkData?.find(
-                  (chk) => chk.ChkId === 6,
-                );
+                const nameEntry = record.chkData?.find((chk) => chk.ChkId === "3");
+                const nameEntry2 = record.chkData?.find((chk) => chk.ChkId === "6");
+                const nameEntry3 = record.chkData?.find((chk) => chk.ChkId === "29");
+
                 return (
                   <TableRow key={record.ID} hover>
                     <TableCell>{nameEntry?.Value || "-"}</TableCell>
+                    <TableCell>{nameEntry3?.Value || "-"}</TableCell>
                     <TableCell>{nameEntry2?.Value || "-"}</TableCell>
                         <TableCell>{formatDate(record.Datetime)}</TableCell>
                          <TableCell>{(record.LastUpdate)}</TableCell>
