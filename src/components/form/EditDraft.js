@@ -44,17 +44,22 @@ function EditDraft() {
 
   // Function to update dependent fields based on parent field value
   const updateDependentFields = (parentId, value) => {
-    const parentCheckpoint = checkpoints.find((cp) => cp.CheckpointId === parentId)
+    // Convert parentId to number if it's a string
+    const numericParentId = typeof parentId === "string" ? Number.parseInt(parentId) : parentId
+
+    const parentCheckpoint = checkpoints.find((cp) => cp.CheckpointId === numericParentId)
 
     if (!parentCheckpoint || !parentCheckpoint.Dependent || parentCheckpoint.Dependent.trim() === "") {
       return
     }
 
+    console.log(`Updating dependents for ${numericParentId} with value:`, value)
+
     // Special case for Dependent = 6
     if (parentCheckpoint.Dependent.trim() === "6") {
       // Set the dependent ID 6 to be visible for this parent
       const newVisibleDependents = { ...visibleDependents }
-      newVisibleDependents[parentId] = [6]
+      newVisibleDependents[numericParentId] = [6]
       setVisibleDependents(newVisibleDependents)
       return
     }
@@ -80,10 +85,10 @@ function EditDraft() {
             .map((id) => Number.parseInt(id))
 
           // Set visible dependents for this parent
-          newVisibleDependents[parentId] = dependentIds
+          newVisibleDependents[numericParentId] = dependentIds
         } else {
           // Clear dependents if no match
-          newVisibleDependents[parentId] = []
+          newVisibleDependents[numericParentId] = []
         }
       }
       // For Checkbox and multi-select Dropdown
@@ -105,9 +110,10 @@ function EditDraft() {
         })
 
         // Set visible dependents for this parent
-        newVisibleDependents[parentId] = dependentIds
+        newVisibleDependents[numericParentId] = dependentIds
       }
 
+      console.log("New visible dependents:", newVisibleDependents)
       setVisibleDependents(newVisibleDependents)
     }
   }
@@ -116,7 +122,7 @@ function EditDraft() {
   const isVisibleDependent = (checkpointId) => {
     // Check if this checkpoint is a dependent of any parent in visibleDependents
     for (const parentId in visibleDependents) {
-      if (visibleDependents[parentId].includes(checkpointId)) {
+      if (visibleDependents[parentId] && visibleDependents[parentId].includes(checkpointId)) {
         return true
       }
     }
@@ -169,12 +175,16 @@ function EditDraft() {
             if (chkId.includes("_")) {
               const [parentId, dependentId] = chkId.split("_").map((id) => Number.parseInt(id))
 
-              // Store the dependent field value
+              // Store the dependent field value using the dependentId as the key
               existingData[dependentId] = value
 
-              // Make sure the dependent is visible
+              console.log(`Loading dependent field ${dependentId} with parent ${parentId}, value:`, value)
+
+              // Make sure the dependent is visible by updating the visibleDependents state
               dependentData[parentId] = dependentData[parentId] || []
-              dependentData[parentId].push(dependentId)
+              if (!dependentData[parentId].includes(dependentId)) {
+                dependentData[parentId].push(dependentId)
+              }
 
               continue
             }
@@ -225,11 +235,17 @@ function EditDraft() {
 
   // Initialize dependencies when form data or checkpoints change
   useEffect(() => {
-    // Process all form fields to update dependencies
-    Object.entries(formData).forEach(([id, value]) => {
-      updateDependentFields(Number.parseInt(id), value)
-    })
-  }, [checkpoints]) // Only run when checkpoints are loaded
+    if (checkpoints.length > 0) {
+      console.log("Initializing dependencies from form data:", formData)
+      // Process all form fields to update dependencies
+      Object.entries(formData).forEach(([id, value]) => {
+        // Skip dependent fields (those with parent IDs)
+        if (!id.includes("_")) {
+          updateDependentFields(Number.parseInt(id), value)
+        }
+      })
+    }
+  }, [checkpoints, formData]) // Run when checkpoints or formData changes
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -345,7 +361,9 @@ function EditDraft() {
   const renderField = (cp) => {
     const type = getType(cp.TypeId).toLowerCase()
     const id = cp.CheckpointId.toString()
-    const value = formData[id] || (type === "checkbox" ? [] : "")
+    // Use nullish coalescing to handle null values properly
+    const value = formData[id] ?? (type === "checkbox" ? [] : "")
+    console.log(`Rendering field ${id} (${cp.Description}) with value:`, value)
     const options = cp.Options ? cp.Options.split(",") : []
     const error = errors[id]
     const editable = cp.Editable === 1
@@ -554,6 +572,18 @@ function EditDraft() {
     // Get dependent checkpoints for this parent
     const dependentIds = visibleDependents[cp.CheckpointId] || []
     const dependentCheckpoints = checkpoints.filter((c) => dependentIds.includes(c.CheckpointId))
+
+    if (dependentIds.length > 0) {
+      console.log(`Parent ${cp.CheckpointId} (${cp.Description}) has dependents:`, dependentIds)
+      dependentCheckpoints.forEach((depCp) => {
+        console.log(
+          `  - Dependent ${depCp.CheckpointId} (${depCp.Description}) has value:`,
+          formData[depCp.CheckpointId],
+        )
+      })
+    }
+
+    console.log(`Rendering checkpoint ${cp.CheckpointId} with dependents:`, dependentIds)
 
     return (
       <Box key={cp.CheckpointId} sx={{ mb: 1 }}>

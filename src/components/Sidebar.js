@@ -26,15 +26,15 @@ function Sidebar() {
     
     // Module Mapping
     const moduleMapping = {
-        21: { path: '/attendance', name: 'Attendance', icon: <BarChart /> },
-        3: { path: '/leave', name: 'Leave', icon: <Person /> },
-        10: { path: '/policy', name: 'Policy', icon: <Policy /> },
-        8: { path: '/holiday', name: 'Holiday', icon: <HolidayVillage /> },
-        12: { path: '/library', name: 'Library', icon: <LibraryBooksIcon /> },
-        22: { path: '/library-dashboard', name: 'Book List', icon: <MenuBookIcon /> },
-        17: { path: '/fee-structure', name: 'Fees Structure', icon: <AppsIcon /> },
-        23: { path: '/fees-payment', name: 'Fees Payment', icon: <AppsIcon /> },
-        18:  { path: '/teachers', name: 'Teachers', icon: <Person /> },
+        // 21: { path: '/attendance', name: 'Attendance', icon: <BarChart /> },
+        // 3: { path: '/leave', name: 'Leave', icon: <Person /> },
+        // 10: { path: '/policy', name: 'Policy', icon: <Policy /> },
+        // 8: { path: '/holiday', name: 'Holiday', icon: <HolidayVillage /> },
+        // 12: { path: '/library', name: 'Library', icon: <LibraryBooksIcon /> },
+        // 22: { path: '/library-dashboard', name: 'Book List', icon: <MenuBookIcon /> },
+        // 17: { path: '/fee-structure', name: 'Fees Structure', icon: <AppsIcon /> },
+        // 23: { path: '/fees-payment', name: 'Fees Payment', icon: <AppsIcon /> },
+        // 18:  { path: '/teachers', name: 'Teachers', icon: <Person /> },
     };
 
     // Default routes visible to everyone
@@ -43,9 +43,9 @@ function Sidebar() {
         // { path: '/notification', name: 'Notification', icon: <Notifications /> }
         { path: '/tender', name: 'Tender', icon: <DynamicFormIcon /> },
         // { path: '/loa', name: 'Letter Of Allotment', icon: <ChecklistIcon /> },
-        { path: '/buyer', name: 'Buyer List', icon: <Person /> },
-        { path: '/directory', name: 'Cotact Person List', icon: <ContactPhoneIcon /> },
-        { path: '/participant', name: 'Participant List', icon: <Person /> },
+        { path: '/buyer', name: 'Buyers', icon: <Person /> },
+        { path: '/directory', name: 'Directory', icon: <ContactPhoneIcon /> },
+        { path: '/participant', name: 'Participants', icon: <Person /> },
     ];
 
     const userModules = user?.modules || [];
@@ -55,7 +55,7 @@ function Sidebar() {
     if (user?.role === 'HR') {
         allowedRoutes.push(
            
-            { path: '/employees', name: 'Employees', icon: <AddHomeWorkIcon /> },
+            // { path: '/employees', name: 'Employees', icon: <AddHomeWorkIcon /> },
             //  { path: '/menus', name: 'Menus', icon: <MenuIcon /> },
             // { path: '/checkpoints', name: 'Checkpoints', icon: <ChecklistIcon /> },
            
