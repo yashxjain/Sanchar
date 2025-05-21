@@ -32,11 +32,17 @@ function EditDraft() {
   const [formData, setFormData] = useState({})
   const [errors, setErrors] = useState({})
   const [visibleDependents, setVisibleDependents] = useState({})
+  const [changedFiles, setChangedFiles] = useState({}) // Track which files have been changed
   const navigate = useNavigate()
 
   const handleChange = (id, value) => {
     setFormData((prev) => ({ ...prev, [id]: value }))
     setErrors((prev) => ({ ...prev, [id]: false }))
+
+    // If this is a file input, mark it as changed
+    if (value && typeof value === "object" && value instanceof File) {
+      setChangedFiles((prev) => ({ ...prev, [id]: true }))
+    }
 
     // Handle dependencies when value changes
     updateDependentFields(id, value)
@@ -281,13 +287,12 @@ function EditDraft() {
             const combinedId = `${parentId}_${cp.CheckpointId}`
 
             if (type === "pic/camera") {
-              if (value && typeof value === "object") {
+              // Only include image data if it's a new file (File object) or marked as changed
+              if (value && typeof value === "object" && value instanceof File) {
                 const base64 = await convertToBase64(value)
                 imageData[combinedId] = base64
-              } else if (typeof value === "string" && (value.startsWith("data:") || value.startsWith("http"))) {
-                // Keep existing image/file
-                imageData[combinedId] = value
               }
+              // Do NOT include existing image data that hasn't changed
             } else if (
               value === undefined ||
               value === null ||
@@ -303,13 +308,12 @@ function EditDraft() {
           }
 
           if (type === "pic/camera") {
-            if (value && typeof value === "object") {
+            // Only include image data if it's a new file (File object) or marked as changed
+            if (value && typeof value === "object" && value instanceof File) {
               const base64 = await convertToBase64(value)
               imageData[id] = base64
-            } else if (typeof value === "string" && (value.startsWith("data:") || value.startsWith("http"))) {
-              // Keep existing image/file
-              imageData[id] = value
             }
+            // Do NOT include existing image data that hasn't changed
             continue
           }
 
@@ -336,7 +340,9 @@ function EditDraft() {
             data: textData,
           })
 
+          // Only send image data if there are actually new/changed images
           if (Object.keys(imageData).length > 0) {
+            console.log("Sending updated image data:", Object.keys(imageData))
             await axios.post("https://namami-infotech.com/SANCHAR/src/menu/add_image.php", {
               menuId,
               ActivityId,
@@ -344,6 +350,8 @@ function EditDraft() {
               // DateTime: dateTime,
               data: imageData,
             })
+          } else {
+            console.log("No image data changes to send")
           }
 
           Swal.fire("Success", isDraft ? "Draft updated successfully!" : "Form updated successfully!", "success")
@@ -549,7 +557,11 @@ function EditDraft() {
                       fullWidth
                       type="file"
                       inputProps={{ accept: "image/*,.pdf" }}
-                      onChange={(e) => handleChange(id, e.target.files[0])}
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          handleChange(id, e.target.files[0])
+                        }
+                      }}
                       disabled={!editable}
                     />
                   </>
