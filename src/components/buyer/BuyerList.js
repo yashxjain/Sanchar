@@ -1,160 +1,222 @@
-import React, { useEffect, useState } from "react";
+"use client"
+
+import { useEffect, useState } from "react"
 import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  CircularProgress,
+  Container,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  Typography,
-  CircularProgress,
   TablePagination,
-  TextField,
-  Box,
-  Button,
-} from "@mui/material";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+  Alert,
+} from "@mui/material"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
+import { Plus, Search } from 'lucide-react'
 
 function BuyerList() {
-  const [tempRecords, setTempRecords] = useState([]);
-  const [filteredRecords, setFilteredRecords] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(15);
-  const navigate = useNavigate();
+  const [buyers, setBuyers] = useState([])
+  const [filteredBuyers, setFilteredBuyers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(15)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const fetchTempData = async () => {
+    const fetchBuyerData = async () => {
+      setLoading(true)
       try {
-        const response = await axios.get(
-          "https://namami-infotech.com/SANCHAR/src/buyer/buyer_list.php",
-        );
+        const response = await axios.get("https://namami-infotech.com/SANCHAR/src/buyer/buyer_list.php")
         if (response.data.success) {
-          setTempRecords(response.data.data);
-          setFilteredRecords(response.data.data);
+          setBuyers(response.data.data)
+          setFilteredBuyers(response.data.data)
         } else {
-          setError("No data found.");
+          setError("No buyer data found.")
         }
       } catch (err) {
-        setError("Failed to fetch data.");
+        setError("Failed to fetch buyer data.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-    fetchTempData();
-  }, []);
+    }
+    fetchBuyerData()
+  }, [])
 
   const handleSearch = (e) => {
-  const value = e.target.value.toLowerCase();
-  setSearchTerm(value);
-  const filtered = tempRecords.filter((record) => {
-    return (
-      record.ZoneID?.toString().toLowerCase().includes(value) ||
-      record.ZoneName?.toLowerCase().includes(value) ||
-      record.DivisionID?.toString().toLowerCase().includes(value) ||
-      record.DivisionName?.toLowerCase().includes(value) ||
-      record.StationID?.toString().toLowerCase().includes(value) ||
-      record.StationName?.toLowerCase().includes(value)
-    );
-  });
-  setFilteredRecords(filtered);
-  setPage(0);
-};
+    const value = e.target.value.toLowerCase()
+    setSearchTerm(value)
+    const filtered = buyers.filter((buyer) => {
+      return (
+        buyer.ZoneID?.toString().toLowerCase().includes(value) ||
+        buyer.ZoneName?.toLowerCase().includes(value) ||
+        buyer.DivisionID?.toString().toLowerCase().includes(value) ||
+        buyer.DivisionName?.toLowerCase().includes(value) ||
+        buyer.StationID?.toString().toLowerCase().includes(value) ||
+        buyer.StationName?.toLowerCase().includes(value)
+      )
+    })
+    setFilteredBuyers(filtered)
+    setPage(0)
+  }
 
-
-  const handleChangePage = (event, newPage) => setPage(newPage);
+  const handleChangePage = (event, newPage) => setPage(newPage)
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+    setRowsPerPage(Number.parseInt(event.target.value, 10))
+    setPage(0)
+  }
 
-
-  if (loading) return <CircularProgress />;
-  // if (error) return <Typography color="error">{error}</Typography>;
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="80vh" flexDirection="column">
+        <CircularProgress sx={{ color: "#F69320" }} />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Loading buyer data...
+        </Typography>
+      </Box>
+    )
+  }
 
   return (
-    <Box p={2}>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-      >
-        <Typography variant="h5" fontWeight="bold">
-          Buyer List
-        </Typography>
+    <Box>
+      
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Typography variant="h5" fontWeight="bold" color="#333">
+            Buyer List
+          </Typography>
 
-        <Box display="flex" gap={2}>
-          <TextField
-            label="Search by Station ID or Name"
-            variant="outlined"
-            size="small"
-            value={searchTerm}
-            onChange={handleSearch}
-            sx={{ width: 300 }}
-          />
-
-          
-          <Button
-            variant="contained"
-            style={{ backgroundColor: "#F69320" }}
-            onClick={() => navigate("/new-buyer")}
-          >
-            New Buyer
-          </Button>
+          <Box display="flex" gap={2}>
+            <TextField
+              label="Search buyers"
+              variant="outlined"
+              size="small"
+              value={searchTerm}
+              onChange={handleSearch}
+              InputProps={{
+                startAdornment: <Search size={18} color="#666" style={{ marginRight: "8px" }} />,
+              }}
+              sx={{
+                width: 300,
+                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#F69320",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#F69320",
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              startIcon={<Plus size={18} />}
+              onClick={() => navigate("/new-buyer")}
+              sx={{
+                backgroundColor: "#F69320",
+                "&:hover": {
+                  backgroundColor: "#e08416",
+                },
+              }}
+            >
+              New Buyer
+            </Button>
+          </Box>
         </Box>
-      </Box>
 
-      <TableContainer component={Paper} sx={{ mb: 2 }}>
-        <Table size="small">
-          <TableHead sx={{ backgroundColor: "#F69320" }}>
-            <TableRow>
-              <TableCell sx={{ color: "white" }}>Zone ID</TableCell>
-              <TableCell sx={{ color: "white" }}>Zone Name</TableCell>
-              <TableCell sx={{ color: "white" }}>Division ID</TableCell>
-              <TableCell sx={{ color: "white" }}>Division Name</TableCell>
-              <TableCell sx={{ color: "white" }}>Station ID</TableCell>
-              <TableCell sx={{ color: "white" }}>Station Name</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredRecords
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((record) => {
-                const nameEntry = record.chkData?.find(
-                  (chk) => chk.ChkId === 3,
-                );
-                return (
-                  <TableRow key={record.ID} hover>
-                    <TableCell>{record.ZoneID}</TableCell>
-                    <TableCell>{record.ZoneName}</TableCell>
-                    <TableCell>{record.DivisionID}</TableCell>
-                    <TableCell>{record.DivisionName}</TableCell>
-                    <TableCell>{record.StationID}</TableCell>
-                    <TableCell>{record.StationName}</TableCell>
+        {error ? (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        ) : (
+          <>
+            <TableContainer
+              sx={{
+                mb: 2,
+                borderRadius: "8px",
+                overflow: "hidden",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+                width: "100%",
+              }}
+            >
+              <Table size="medium">
+                <TableHead sx={{ backgroundColor: "#F69320" }}>
+                  <TableRow>
+                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Zone ID</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Zone Name</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Division ID</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Division Name</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Station ID</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Station Name</TableCell>
                   </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {filteredBuyers.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                        <Typography color="textSecondary">No buyers found</Typography>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredBuyers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((buyer, index) => (
+                      <TableRow
+                        key={index}
+                        hover
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: "rgba(246, 147, 32, 0.04)",
+                          },
+                        }}
+                      >
+                        <TableCell>{buyer.ZoneID}</TableCell>
+                        <TableCell>{buyer.ZoneName}</TableCell>
+                        <TableCell>{buyer.DivisionID}</TableCell>
+                        <TableCell>{buyer.DivisionName}</TableCell>
+                        <TableCell>{buyer.StationID}</TableCell>
+                        <TableCell>{buyer.StationName}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-      <TablePagination
-        component="div"
-        count={filteredRecords.length}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 15]}
-      />
+            <TablePagination
+              component="div"
+              count={filteredBuyers.length}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              rowsPerPageOptions={[5, 10, 15, 25]}
+              sx={{
+                ".MuiTablePagination-selectIcon": {
+                  color: "#F69320",
+                },
+                ".MuiTablePagination-select": {
+                  fontWeight: 500,
+                },
+                ".Mui-selected": {
+                  backgroundColor: "#F69320 !important",
+                  color: "white",
+                },
+              }}
+            />
+          </>
+        )}
+
+        {/* Summary stats */}
+       
+      
     </Box>
-  );
+  )
 }
 
-export default BuyerList;
+export default BuyerList

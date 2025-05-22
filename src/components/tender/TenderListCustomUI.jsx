@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./TenderList.css"; // You would need to create this CSS file
 
-function TenderList() {
+function TenderListCustomUI() {
   const [tempRecords, setTempRecords] = useState([]);
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -183,4 +183,4 @@ function TenderList() {
   );
 }
 
-export default TenderList;
+export default TenderListCustomUI;

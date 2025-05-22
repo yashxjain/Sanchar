@@ -18,6 +18,9 @@ import {
   MapPin,
   Phone,
   Mail,
+  Edit,
+  Save,
+  X,
 } from "lucide-react"
 import logo from "../../assets/images (1).png"
 
@@ -25,7 +28,7 @@ import logo from "../../assets/images (1).png"
 const StyledContainer = ({ children, ...props }) => {
   const style = {
     padding: "10px",
-    background: "linear-gradient(to right, #f8f9fa, #ffffff)",
+    background: " #ffffff",
     minHeight: "100vh",
     ...props.style,
   }
@@ -173,14 +176,14 @@ const StyledGrid = ({ children, columns = 1, ...props }) => {
   )
 }
 
-const StyledFieldBox = ({ children, ...props }) => {
+const StyledFieldBox = ({ children, isEditing, ...props }) => {
   const style = {
     padding: "12px",
     borderRadius: "8px",
-    backgroundColor: "#f9f9f9",
-    border: "1px solid #eee",
+    backgroundColor: isEditing ? "#fff8e1" : "#f9f9f9",
+    border: isEditing ? "1px solid #F69320" : "1px solid #eee",
     height: "100%",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease",
     position: "relative",
     overflow: "hidden",
     ":hover": {
@@ -214,6 +217,25 @@ const StyledFieldValue = ({ children, ...props }) => {
     ...props.style,
   }
   return <div style={style}>{children}</div>
+}
+
+const StyledInput = ({ value, onChange, ...props }) => {
+  const style = {
+    width: "100%",
+    padding: "8px 12px",
+    fontSize: "14px",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    backgroundColor: "white",
+    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+    outline: "none",
+    ":focus": {
+      borderColor: "#F69320",
+      boxShadow: "0 0 0 2px rgba(246, 147, 32, 0.2)",
+    },
+    ...props.style,
+  }
+  return <input value={value} onChange={onChange} style={style} {...props} />
 }
 
 const StyledAvatar = ({ src, alt, size = 100, ...props }) => {
@@ -326,6 +348,42 @@ const StyledError = ({ children, ...props }) => {
   return <div style={style}>{children}</div>
 }
 
+const StyledToast = ({ message, type = "success", onClose }) => {
+  const style = {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    padding: "12px 20px",
+    borderRadius: "8px",
+    backgroundColor: type === "success" ? "#4caf50" : "#f44336",
+    color: "white",
+    boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+    zIndex: 1000,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    minWidth: "250px",
+  }
+
+  return (
+    <div style={style}>
+      <span>{message}</span>
+      <button
+        onClick={onClose}
+        style={{
+          background: "none",
+          border: "none",
+          color: "white",
+          cursor: "pointer",
+          marginLeft: "10px",
+        }}
+      >
+        <X size={16} />
+      </button>
+    </div>
+  )
+}
+
 // Icon mapping for field types
 const getIconForField = (fieldName) => {
   const fieldNameLower = fieldName.toLowerCase()
@@ -348,14 +406,36 @@ function TempTenderView() {
   const navigate = useNavigate()
   const [selectedImage, setSelectedImage] = useState("")
 
+  // Edit mode state
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedData, setEditedData] = useState({})
+  const [isSaving, setIsSaving] = useState(false)
+  const [toast, setToast] = useState({ show: false, message: "", type: "success" })
+
+  // User state - check if user is admin
+  const [user, setUser] = useState(null)
+  const isAdmin = user?.role === "Admin"
+
   // Checkpoint groups
   const sections = {
-    "Participants Details": [ 18, 20, 21, 22, 23, 24, 25, 26, 27],
-    LOA: [28, 29, 30, 31, 32, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 81, 82],
+    "Participants Details": [18, 20, 21, 22, 23, 24, 25, 26, 27],
+    LOA: [28, 29, 30, 31, 32, 74, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 81, 82],
   }
 
-  const candidateDetailsIds = [1, 3, 5, 6, 7, 8, 9, 10, 11, 12,15, 16, 17,]
+  const candidateDetailsIds = [1, 3, 5, 6, 8, 9, 10, 11, 12, 15, 16, 17]
   const studentPhotoChkId = 2 // Assume 2 is the image URL
+
+  // Get user from localStorage on component mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (e) {
+        console.error("Failed to parse user from localStorage", e)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -376,6 +456,13 @@ function TempTenderView() {
           })
           setCheckpoints(checkpointMap)
           setDetails(detailsRes.data.data)
+
+          // Initialize editedData with current values
+          const initialEditData = {}
+          detailsRes.data.data.forEach((item) => {
+            initialEditData[item.ChkId] = item.Value
+          })
+          setEditedData(initialEditData)
         } else {
           setError("No details or checkpoints found.")
         }
@@ -414,10 +501,90 @@ function TempTenderView() {
     window.open(url, "_blank")
   }
 
+  // Handle input change in edit mode
+  const handleInputChange = (chkId, value) => {
+    setEditedData((prev) => ({
+      ...prev,
+      [chkId]: value,
+    }))
+  }
+
+  // Toggle edit mode
+  const toggleEditMode = () => {
+    if (isEditing) {
+      // If we're exiting edit mode without saving, reset to original values
+      const initialEditData = {}
+      details.forEach((item) => {
+        initialEditData[item.ChkId] = item.Value
+      })
+      setEditedData(initialEditData)
+    }
+    setIsEditing(!isEditing)
+  }
+
+  // Save changes
+  const saveChanges = async () => {
+    if (!isAdmin) {
+      setToast({
+        show: true,
+        message: "Only admin users can save changes",
+        type: "error",
+      })
+      return
+    }
+
+    setIsSaving(true)
+    try {
+      // Convert editedData from object to array format expected by API
+      const dataToSend = {}
+      Object.keys(editedData).forEach((chkId) => {
+        dataToSend[chkId] = editedData[chkId]
+      })
+
+      const response = await axios.post("https://namami-infotech.com/SANCHAR/src/menu/edit_transaction.php", {
+        ActivityId: activityId,
+        data: dataToSend,
+        LatLong: null, // Add LatLong if needed
+      })
+
+      if (response.data.success) {
+        // Update local details with edited data
+        const updatedDetails = details.map((item) => ({
+          ...item,
+          Value: editedData[item.ChkId] || item.Value,
+        }))
+
+        setDetails(updatedDetails)
+        setIsEditing(false)
+        setToast({
+          show: true,
+          message: "Changes saved successfully",
+          type: "success",
+        })
+      } else {
+        throw new Error(response.data.message || "Failed to save changes")
+      }
+    } catch (err) {
+      console.error("Error saving changes:", err)
+      setToast({
+        show: true,
+        message: err.message || "Failed to save changes",
+        type: "error",
+      })
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const closeToast = () => {
+    setToast({ ...toast, show: false })
+  }
+
   const renderStudentDetails = () => {
     const fields = candidateDetailsIds.map((id) => {
       const value = getValueByChkId(id)
       return {
+        id,
         label: checkpoints[id] || `Checkpoint #${id}`,
         value,
         isImage: isImageUrl(value),
@@ -427,9 +594,44 @@ function TempTenderView() {
 
     return (
       <StyledCard highlight={true}>
-        <div style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
-          <Award size={20} color="#F69320" style={{ marginRight: "10px" }} />
-          <StyledTitle level={2}>Tender Participant Details</StyledTitle>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "15px" }}>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Award size={20} color="#F69320" style={{ marginRight: "10px" }} />
+            <StyledTitle level={2}>Tender Participant Details</StyledTitle>
+          </div>
+
+          {isAdmin && (
+            <div>
+              {isEditing ? (
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <StyledButton
+                    onClick={saveChanges}
+                    primary
+                    disabled={isSaving}
+                    style={{ backgroundColor: "#4caf50" }}
+                  >
+                    {isSaving ? (
+                      "Saving..."
+                    ) : (
+                      <>
+                        <Save size={16} style={{ marginRight: "5px" }} />
+                        Save
+                      </>
+                    )}
+                  </StyledButton>
+                  <StyledButton onClick={toggleEditMode}>
+                    <X size={16} style={{ marginRight: "5px" }} />
+                    Cancel
+                  </StyledButton>
+                </div>
+              ) : (
+                <StyledButton onClick={toggleEditMode} primary>
+                  <Edit size={16} style={{ marginRight: "5px" }} />
+                  Edit Details
+                </StyledButton>
+              )}
+            </div>
+          )}
         </div>
         <StyledDivider />
 
@@ -468,7 +670,9 @@ function TempTenderView() {
                     border: "2px solid white",
                     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
                     margin: "0 auto 10px auto",
+                    cursor: "pointer",
                   }}
+                  onClick={() => openFileInNewTab(getValueByChkId(studentPhotoChkId))}
                 >
                   <FileText size={50} color="#F69320" />
                 </div>
@@ -482,8 +686,8 @@ function TempTenderView() {
                   )}
                 </div>
               )}
-              <div style={{ fontSize: "14px", fontWeight: "600", marginTop: "5px" }}>Tender Image</div>
-              {isPdfUrl(getValueByChkId(studentPhotoChkId)) && (
+              <div style={{ fontSize: "14px", fontWeight: "600", marginTop: "5px" }}>Tender</div>
+              {/* {isPdfUrl(getValueByChkId(studentPhotoChkId)) && (
                 <StyledButton
                   style={{ marginTop: "10px", padding: "6px 12px", fontSize: "12px" }}
                   onClick={() => openFileInNewTab(getValueByChkId(studentPhotoChkId))}
@@ -491,7 +695,7 @@ function TempTenderView() {
                   <FileText size={14} style={{ marginRight: "5px" }} />
                   View PDF
                 </StyledButton>
-              )}
+              )} */}
             </div>
 
             {/* Key Details */}
@@ -505,12 +709,19 @@ function TempTenderView() {
                 {fields
                   .filter((f, idx) => idx < 4 && !f.isImage && !f.isPdf)
                   .map((field, idx) => (
-                    <StyledFieldBox key={idx} style={{ backgroundColor: "white" }}>
+                    <StyledFieldBox key={idx} style={{ backgroundColor: "white" }} isEditing={isEditing}>
                       <StyledFieldLabel>
                         {getIconForField(field.label)}
                         {field.label}
                       </StyledFieldLabel>
-                      <StyledFieldValue>{field.value || "—"}</StyledFieldValue>
+                      {isEditing ? (
+                        <StyledInput
+                          value={editedData[field.id] || ""}
+                          onChange={(e) => handleInputChange(field.id, e.target.value)}
+                        />
+                      ) : (
+                        <StyledFieldValue>{field.value || "—"}</StyledFieldValue>
+                      )}
                     </StyledFieldBox>
                   ))}
               </StyledGrid>
@@ -526,12 +737,19 @@ function TempTenderView() {
               {fields
                 .filter((f, idx) => idx >= 4 && !f.isImage && !f.isPdf)
                 .map((field, idx) => (
-                  <StyledFieldBox key={idx}>
+                  <StyledFieldBox key={idx} isEditing={isEditing}>
                     <StyledFieldLabel>
                       {getIconForField(field.label)}
                       {field.label}
                     </StyledFieldLabel>
-                    <StyledFieldValue>{field.value || "—"}</StyledFieldValue>
+                    {isEditing ? (
+                      <StyledInput
+                        value={editedData[field.id] || ""}
+                        onChange={(e) => handleInputChange(field.id, e.target.value)}
+                      />
+                    ) : (
+                      <StyledFieldValue>{field.value || "—"}</StyledFieldValue>
+                    )}
                   </StyledFieldBox>
                 ))}
 
@@ -539,12 +757,18 @@ function TempTenderView() {
               {fields
                 .filter((f) => f.isImage || f.isPdf)
                 .map((field, idx) => (
-                  <StyledFieldBox key={`file-${idx}`}>
+                  <StyledFieldBox key={`file-${idx}`} isEditing={isEditing}>
                     <StyledFieldLabel>
                       {field.isPdf ? <FileText size={16} /> : <ImageIcon size={16} />}
                       {field.label}
                     </StyledFieldLabel>
-                    {field.isImage ? (
+                    {isEditing ? (
+                      <StyledInput
+                        value={editedData[field.id] || ""}
+                        onChange={(e) => handleInputChange(field.id, e.target.value)}
+                        placeholder={field.isPdf ? "Enter PDF URL" : "Enter image URL"}
+                      />
+                    ) : field.isImage ? (
                       <StyledButton
                         style={{ marginTop: "5px", padding: "6px 12px", fontSize: "12px" }}
                         onClick={() => openFileInNewTab(field.value)}
@@ -630,6 +854,7 @@ function TempTenderView() {
                 return (
                   <StyledFieldBox
                     key={`${parentId}-${index}`}
+                    isEditing={isEditing}
                     style={{
                       backgroundColor: isImage || isPdf ? "rgba(246, 147, 32, 0.05)" : "#f9f9f9",
                       border: isImage || isPdf ? "1px solid rgba(246, 147, 32, 0.2)" : "1px solid #eee",
@@ -646,7 +871,13 @@ function TempTenderView() {
                       {getLabel(item.ChkId)}
                     </StyledFieldLabel>
 
-                    {isImage ? (
+                    {isEditing ? (
+                      <StyledInput
+                        value={editedData[item.ChkId] || ""}
+                        onChange={(e) => handleInputChange(item.ChkId, e.target.value)}
+                        placeholder={isPdf ? "Enter PDF URL" : isImage ? "Enter image URL" : "Enter value"}
+                      />
+                    ) : isImage ? (
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
                         <div style={{ position: "relative", marginBottom: "10px" }}>
                           <img
@@ -745,7 +976,9 @@ function TempTenderView() {
             <StyledTitle level={1} style={{ color: "#F69320", margin: 0 }}>
               SANCHHAR RAILWAY TENDERS
             </StyledTitle>
-            <StyledSubtitle style={{ margin: 0 }}>TENDER Form Details</StyledSubtitle>
+            <StyledSubtitle style={{ margin: 0 }}>
+              TENDER Form Details {isAdmin && <StyledBadge color="#4caf50">Admin Access</StyledBadge>}
+            </StyledSubtitle>
           </div>
         </div>
 
@@ -807,6 +1040,9 @@ function TempTenderView() {
           <ArrowLeft size={24} style={{ transform: "rotate(90deg)" }} />
         </StyledButton>
       </div>
+
+      {/* Toast notification */}
+      {toast.show && <StyledToast message={toast.message} type={toast.type} onClose={closeToast} />}
 
       {/* Add global styles */}
       <style>{`
