@@ -34,7 +34,7 @@ import {
   ChevronRight,
   Dashboard,
 } from "@mui/icons-material"
-import HRSmileLogo from "../assets/HRSmileLogo.jpeg"
+import HRSmileLogo from "../assets/images (1).png"
 
 function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -244,9 +244,9 @@ function Navbar() {
         //   borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
           backdropFilter: "blur(20px)",
           transition: "all 0.3s ease",
-          width: "80%",
+          width: "100%",
           marginLeft: "auto",
-          zIndex: (theme) => theme.zIndex.drawer + 1,
+          zIndex: (theme) => theme.zIndex.drawer - 1,
         }}
       >
         <Toolbar sx={{ display: "flex", justifyContent: "flex-end", px: { xs: 1, sm: 2 } }}>

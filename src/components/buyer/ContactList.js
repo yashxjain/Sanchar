@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import {
   Table,
@@ -14,9 +16,11 @@ import {
   Box,
   Button,
   Autocomplete,
+  Alert,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Search, Plus } from "lucide-react";
 
 function ContactList() {
   const [tempRecords, setTempRecords] = useState([]);
@@ -29,7 +33,6 @@ function ContactList() {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const navigate = useNavigate();
 
-  // Options for Type filter
   const typeOptions = ["Zone", "Division", "Station"];
 
   useEffect(() => {
@@ -53,18 +56,15 @@ function ContactList() {
     fetchTempData();
   }, []);
 
-  // Apply filters: searchTerm + typeFilter
   useEffect(() => {
     let filtered = tempRecords;
 
-    // Filter by Type if selected
     if (typeFilter) {
       filtered = filtered.filter(
         (record) => record.Type?.toLowerCase() === typeFilter.toLowerCase()
       );
     }
 
-    // Filter by searchTerm
     if (searchTerm) {
       const value = searchTerm.toLowerCase();
       filtered = filtered.filter(
@@ -82,31 +82,28 @@ function ContactList() {
     setPage(0);
   }, [searchTerm, typeFilter, tempRecords]);
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
+  const handleSearch = (e) => setSearchTerm(e.target.value);
   const handleChangePage = (event, newPage) => setPage(newPage);
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  if (loading) return <CircularProgress />;
-  // if (error) return <Typography color="error">{error}</Typography>;
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="80vh" flexDirection="column">
+        <CircularProgress sx={{ color: "#F69320" }} />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Loading contact data...
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box p={2}>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-        flexWrap="wrap"
-        gap={2}
-      >
-        <Typography variant="h5" fontWeight="bold">
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} flexWrap="wrap" gap={2}>
+        <Typography variant="h5" fontWeight="bold" color="#333">
           Contact List
         </Typography>
 
@@ -128,44 +125,90 @@ function ContactList() {
             size="small"
             value={searchTerm}
             onChange={handleSearch}
-            sx={{ width: 300 }}
+            InputProps={{
+              startAdornment: <Search size={18} color="#666" style={{ marginRight: "8px" }} />,
+            }}
+            sx={{
+              width: 300,
+              "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#F69320",
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "#F69320",
+              },
+            }}
           />
 
           <Button
             variant="contained"
-            style={{ backgroundColor: "#F69320" }}
+            startIcon={<Plus size={18} />}
             onClick={() => navigate("/contact")}
+            sx={{
+              backgroundColor: "#F69320",
+              "&:hover": {
+                backgroundColor: "#e08416",
+              },
+            }}
           >
             Add Contact
           </Button>
         </Box>
       </Box>
 
-      <TableContainer component={Paper} sx={{ mb: 2 }}>
-        <Table size="small">
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
+
+      <TableContainer
+        component={Paper}
+        sx={{
+          mb: 2,
+          borderRadius: "8px",
+          overflow: "hidden",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+          width: "100%",
+        }}
+      >
+        <Table size="medium">
           <TableHead sx={{ backgroundColor: "#F69320" }}>
             <TableRow>
-              <TableCell sx={{ color: "white" }}>Type </TableCell>
-              <TableCell sx={{ color: "white" }}>Type ID</TableCell>
-              <TableCell sx={{ color: "white" }}>Contact Person</TableCell>
-              <TableCell sx={{ color: "white" }}>Mobile</TableCell>
-              <TableCell sx={{ color: "white" }}>Mail</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Type</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Type ID</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Contact Person</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Mobile</TableCell>
+              <TableCell sx={{ color: "white", fontWeight: "bold" }}>Mail</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredRecords
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((record) => {
-                return (
-                  <TableRow key={record.ID} hover>
+            {filteredRecords.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                  <Typography color="textSecondary">No contacts found</Typography>
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredRecords
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((record) => (
+                  <TableRow
+                    key={record.ID}
+                    hover
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "rgba(246, 147, 32, 0.04)",
+                      },
+                    }}
+                  >
                     <TableCell>{record.Type}</TableCell>
                     <TableCell>{record.TypeId}</TableCell>
                     <TableCell>{record.ContactPerson}</TableCell>
                     <TableCell>{record.ContactNumber}</TableCell>
                     <TableCell>{record.ContactMail}</TableCell>
                   </TableRow>
-                );
-              })}
+                ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -178,6 +221,18 @@ function ContactList() {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         rowsPerPageOptions={[5, 10, 15]}
+        sx={{
+          ".MuiTablePagination-selectIcon": {
+            color: "#F69320",
+          },
+          ".MuiTablePagination-select": {
+            fontWeight: 500,
+          },
+          ".Mui-selected": {
+            backgroundColor: "#F69320 !important",
+            color: "white",
+          },
+        }}
       />
     </Box>
   );

@@ -40,15 +40,30 @@ function EditDraft() {
   const navigate = useNavigate()
 
   const handleChange = (id, value) => {
-    // Check if this is a dependent field
-    const isDependent = id.toString().includes("_") || isVisibleDependent(Number.parseInt(id))
+    console.log(`Handling change for field ${id} with value:`, value)
 
-    // If it's a dependent field and doesn't already have a parent ID prefix
-    if (isVisibleDependent(Number.parseInt(id)) && !id.toString().includes("_")) {
-      const parentId = getParentId(Number.parseInt(id))
+    // If the ID already includes an underscore, it's already in the combined format
+    if (id.toString().includes("_")) {
+      // This is already a combined ID (parentId_dependentId)
+      setFormData((prev) => ({ ...prev, [id]: value }))
+      setErrors((prev) => ({ ...prev, [id]: false }))
+
+      // If this is a file input, mark it as changed
+      if (value && typeof value === "object" && value instanceof File) {
+        setChangedFiles((prev) => ({ ...prev, [id]: true }))
+      }
+
+      return // Skip the rest since we've handled it with the combined ID
+    }
+
+    // Check if this is a dependent field that needs a combined ID
+    const numericId = Number.parseInt(id)
+    if (isVisibleDependent(numericId)) {
+      const parentId = getParentId(numericId)
       if (parentId) {
         // Use combined ID format for dependent fields: parentId_dependentId
         const combinedId = `${parentId}_${id}`
+        console.log(`Converting dependent field ${id} to combined ID ${combinedId}`)
         setFormData((prev) => ({ ...prev, [combinedId]: value }))
         setErrors((prev) => ({ ...prev, [combinedId]: false }))
 
@@ -361,62 +376,71 @@ function EditDraft() {
           const textData = {}
           const imageData = {}
 
-          for (const cp of checkpoints) {
-            const id = cp.CheckpointId.toString()
+          // First, collect all form data keys to process
+          const formDataKeys = Object.keys(formData)
+
+          console.log("All form data keys before submission:", formDataKeys)
+
+          // Process all form data entries
+          for (const key of formDataKeys) {
+            const value = formData[key]
+
+            // Check if this is a dependent field (format: parentId_dependentId)
+            if (key.includes("_")) {
+              console.log(`Processing dependent field ${key} with value:`, value)
+
+              // For dependent fields with image type
+              if (value && typeof value === "object" && value instanceof File) {
+                const base64 = await convertToBase64(value)
+                imageData[key] = base64
+                console.log(`Added dependent image field ${key} to imageData`)
+              } else {
+                // For text-based dependent fields
+                textData[key] = Array.isArray(value) ? value.join(",") : value
+                console.log(`Added dependent text field ${key} to textData with value:`, textData[key])
+              }
+
+              continue
+            }
+
+            // For regular fields, find the checkpoint to determine type
+            const cpId = Number.parseInt(key)
+            const cp = checkpoints.find((c) => c.CheckpointId === cpId)
+
+            if (!cp) {
+              console.log(`No checkpoint found for ID ${key}, skipping`)
+              continue
+            }
+
             const type = getType(cp.TypeId).toLowerCase()
-            const value = formData[id]
 
-            // Skip if this is a dependent field with parent ID
-            const parentId = getParentId(cp.CheckpointId)
-
-            if (parentId) {
-              // For dependent fields, use combined ID format: parentId_dependentId
-              const combinedId = `${parentId}_${cp.CheckpointId}`
-
-              if (type === "pic/camera") {
-                // Only include image data if it's a new file (File object) or marked as changed
-                if (value && typeof value === "object" && value instanceof File) {
-                  const base64 = await convertToBase64(value)
-                  imageData[combinedId] = base64
-                }
-                // Do NOT include existing image data that hasn't changed
-              } else if (
+            if (type === "pic/camera") {
+              // Only include image data if it's a new file (File object)
+              if (value && typeof value === "object" && value instanceof File) {
+                const base64 = await convertToBase64(value)
+                imageData[key] = base64
+                console.log(`Added regular image field ${key} to imageData`)
+              }
+              // Do NOT include existing image data that hasn't changed
+            } else {
+              // For text-based fields
+              if (
                 value === undefined ||
                 value === null ||
                 (typeof value === "string" && value.trim() === "") ||
                 (Array.isArray(value) && value.length === 0)
               ) {
-                textData[combinedId] = null
+                textData[key] = null
               } else {
-                textData[combinedId] = Array.isArray(value) ? value.join(",") : value
+                textData[key] = Array.isArray(value) ? value.join(",") : value
               }
-
-              continue // Skip adding with regular ID
-            }
-
-            if (type === "pic/camera") {
-              // Only include image data if it's a new file (File object) or marked as changed
-              if (value && typeof value === "object" && value instanceof File) {
-                const base64 = await convertToBase64(value)
-                imageData[id] = base64
-              }
-              // Do NOT include existing image data that hasn't changed
-              continue
-            }
-
-            if (
-              value === undefined ||
-              value === null ||
-              (typeof value === "string" && value.trim() === "") ||
-              (Array.isArray(value) && value.length === 0)
-            ) {
-              textData[id] = null
-            } else {
-              textData[id] = Array.isArray(value) ? value.join(",") : value
+              console.log(`Added regular text field ${key} to textData with value:`, textData[key])
             }
           }
 
           try {
+            console.log("Sending text data to API:", textData)
+
             // Use update_transaction.php instead of add_transaction.php
             await axios.post("https://namami-infotech.com/SANCHAR/src/menu/update_transaction.php", {
               menuId,
@@ -479,7 +503,7 @@ function EditDraft() {
     const parentId = getParentId(cp.CheckpointId)
     const actualId = parentId ? `${parentId}_${cp.CheckpointId}` : id
     const value = formData[actualId] ?? (type === "checkbox" ? [] : "")
-    console.log(`Rendering field ${id} (${cp.Description}) with value:`, value)
+    console.log(`Rendering field ${id} (${cp.Description}) with actualId: ${actualId}, value:`, value)
     const options = cp.Options ? cp.Options.split(",").map((opt) => opt.trim()) : []
     const error = errors[id]
     const editable = cp.Editable === 1
@@ -518,7 +542,7 @@ function EditDraft() {
                     fullWidth
                     type="text"
                     value={value}
-                    onChange={(e) => handleChange(id, e.target.value)}
+                    onChange={(e) => handleChange(actualId, e.target.value)}
                     error={error}
                     helperText={error ? "This field is required" : ""}
                     disabled={!editable}
@@ -536,7 +560,7 @@ function EditDraft() {
                     fullWidth
                     type="email"
                     value={value}
-                    onChange={(e) => handleChange(id, e.target.value)}
+                    onChange={(e) => handleChange(actualId, e.target.value)}
                     error={error}
                     helperText={error ? "This field is required" : ""}
                     disabled={!editable}
@@ -554,7 +578,7 @@ function EditDraft() {
                     fullWidth
                     type="number"
                     value={value}
-                    onChange={(e) => handleChange(id, e.target.value)}
+                    onChange={(e) => handleChange(actualId, e.target.value)}
                     error={error}
                     helperText={error ? "This field is required" : ""}
                     disabled={!editable}
@@ -572,7 +596,7 @@ function EditDraft() {
                     fullWidth
                     type="number"
                     value={value}
-                    onChange={(e) => handleChange(id, e.target.value)}
+                    onChange={(e) => handleChange(actualId, e.target.value)}
                     error={error}
                     helperText={error ? "This field is required" : ""}
                     disabled={!editable}
@@ -591,7 +615,7 @@ function EditDraft() {
                     multiline
                     rows={4}
                     value={value}
-                    onChange={(e) => handleChange(id, e.target.value)}
+                    onChange={(e) => handleChange(actualId, e.target.value)}
                     error={error}
                     helperText={error ? "This field is required" : ""}
                     disabled={!editable}
@@ -610,7 +634,7 @@ function EditDraft() {
                     type="date"
                     InputLabelProps={{ shrink: true }}
                     value={value}
-                    onChange={(e) => handleChange(id, e.target.value)}
+                    onChange={(e) => handleChange(actualId, e.target.value)}
                     error={error}
                     helperText={error ? "This field is required" : ""}
                     disabled={!editable}
@@ -633,7 +657,7 @@ function EditDraft() {
                     value={isMulti ? (value ? (Array.isArray(value) ? value : value.split(",")) : []) : value || null}
                     onChange={(event, newValue) => {
                       const finalValue = isMulti ? newValue.join(",") : newValue
-                      handleChange(id, finalValue)
+                      handleChange(actualId, finalValue)
                     }}
                     disabled={!editable}
                     size="small"
@@ -655,7 +679,7 @@ function EditDraft() {
               case "radio":
                 return (
                   <>
-                    <RadioGroup row value={value} onChange={(e) => handleChange(id, e.target.value)}>
+                    <RadioGroup row value={value} onChange={(e) => handleChange(actualId, e.target.value)}>
                       {options.map((opt) => (
                         <FormControlLabel
                           key={opt}
@@ -706,7 +730,7 @@ function EditDraft() {
                                 newValue = newValue.filter((v) => v !== opt)
                               }
 
-                              handleChange(id, newValue)
+                              handleChange(actualId, newValue)
                             }}
                             disabled={!editable}
                             sx={{
@@ -759,7 +783,7 @@ function EditDraft() {
                         accept="image/*,.pdf"
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
-                            handleChange(id, e.target.files[0])
+                            handleChange(actualId, e.target.files[0])
                           }
                         }}
                       />
