@@ -21,6 +21,9 @@ import {
   Edit,
   Save,
   X,
+  ChevronDown,
+  ChevronUp,
+  Filter,
 } from "lucide-react"
 import logo from "../../assets/images (1).png"
 
@@ -176,23 +179,48 @@ const StyledGrid = ({ children, columns = 1, ...props }) => {
   )
 }
 
-const StyledFieldBox = ({ children, isEditing, ...props }) => {
-  const style = {
+const StyledFieldBox = ({ children, isEditing, variant = "default", ...props }) => {
+  let baseStyle = {
     padding: "12px",
     borderRadius: "8px",
     backgroundColor: isEditing ? "#fff8e1" : "#f9f9f9",
     border: isEditing ? "1px solid #F69320" : "1px solid #eee",
     height: "100%",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease",
+    transition: "all 0.2s ease",
     position: "relative",
     overflow: "hidden",
-    ":hover": {
-      transform: "translateY(-2px)",
-      boxShadow: "0 6px 15px rgba(0, 0, 0, 0.05)",
-    },
     ...props.style,
   }
-  return <div style={style}>{children}</div>
+
+  // Different style variants
+  if (variant === "modern") {
+    baseStyle = {
+      ...baseStyle,
+      backgroundColor: isEditing ? "#fff8e1" : "#ffffff",
+      boxShadow: "0 3px 10px rgba(0, 0, 0, 0.08)",
+      border: "none",
+      borderLeft: "3px solid #F69320",
+    }
+  } else if (variant === "card") {
+    baseStyle = {
+      ...baseStyle,
+      backgroundColor: "#ffffff",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.05)",
+      borderRadius: "10px",
+      border: "1px solid #f0f0f0",
+      padding: "15px",
+    }
+  } else if (variant === "flat") {
+    baseStyle = {
+      ...baseStyle,
+      backgroundColor: isEditing ? "#fff8e1" : "#f8f9fa",
+      border: "1px solid #eaeaea",
+      borderRadius: "6px",
+      boxShadow: "none",
+    }
+  }
+
+  return <div style={baseStyle}>{children}</div>
 }
 
 const StyledFieldLabel = ({ children, ...props }) => {
@@ -214,6 +242,7 @@ const StyledFieldValue = ({ children, ...props }) => {
     fontSize: "14px",
     color: "#333",
     wordBreak: "break-word",
+    fontWeight: "500",
     ...props.style,
   }
   return <div style={style}>{children}</div>
@@ -384,6 +413,48 @@ const StyledToast = ({ message, type = "success", onClose }) => {
   )
 }
 
+// New styled section header component
+const StyledSectionHeader = ({ title, icon, onToggle, isCollapsed, count, ...props }) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "15px 20px",
+        borderRadius: "10px",
+        background: "linear-gradient(135deg, #F69320 0%, #ffb74d 100%)",
+        color: "white",
+        boxShadow: "0 4px 15px rgba(246, 147, 32, 0.2)",
+        marginBottom: isCollapsed ? "10px" : "20px",
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+        ...props.style,
+      }}
+      onClick={onToggle}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        {icon}
+        <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "600" }}>{title}</h3>
+        {count > 0 && (
+          <span
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.3)",
+              borderRadius: "20px",
+              padding: "2px 10px",
+              fontSize: "12px",
+              fontWeight: "bold",
+            }}
+          >
+            {count}
+          </span>
+        )}
+      </div>
+      <div>{isCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}</div>
+    </div>
+  )
+}
+
 // Icon mapping for field types
 const getIconForField = (fieldName) => {
   const fieldNameLower = fieldName.toLowerCase()
@@ -405,6 +476,7 @@ function TempTenderView() {
   const [error, setError] = useState("")
   const navigate = useNavigate()
   const [selectedImage, setSelectedImage] = useState("")
+  const [windowWidth, setWindowWidth] = useState(1200)
 
   // Edit mode state
   const [isEditing, setIsEditing] = useState(false)
@@ -412,18 +484,37 @@ function TempTenderView() {
   const [isSaving, setIsSaving] = useState(false)
   const [toast, setToast] = useState({ show: false, message: "", type: "success" })
 
+  // Collapsible sections state
+  const [collapsedSections, setCollapsedSections] = useState({})
+
+  // Field style variant state
+  const [fieldVariant, setFieldVariant] = useState("modern") // Options: default, modern, card, flat
+
   // User state - check if user is admin
   const [user, setUser] = useState(null)
   const isAdmin = user?.role === "Admin"
 
   // Checkpoint groups
   const sections = {
-    "Participants Details": [18, 20, 21, 22, 23, 24, 25, 26, 27],
-    LOA: [28, 29, 30, 31, 32, 74, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 81, 82],
+    "Tender Published Details": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+    "TENDER PARTICIPATED BY SWCL": [20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+    "TENDER OPENED DETAILS": [
+      31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
+    ],
+    "LOA AWARDED TO SWCL": [
+      59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 104, 105, 106, 107, 108, 109, 110, 111,
+    ],
   }
 
-  const candidateDetailsIds = [1, 3, 5, 6, 8, 9, 10, 11, 12, 15, 16, 17]
-  const studentPhotoChkId = 2 // Assume 2 is the image URL
+  const candidateDetailsIds = [2, 4, 5, 7, 6, 18]
+  const studentPhotoChkId = 3 // Assume 2 is the image URL
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth)
+    window.addEventListener("resize", handleResize)
+    handleResize()
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   // Get user from localStorage on component mount
   useEffect(() => {
@@ -522,6 +613,22 @@ function TempTenderView() {
     setIsEditing(!isEditing)
   }
 
+  // Toggle section collapse
+  const toggleSectionCollapse = (sectionTitle) => {
+    setCollapsedSections((prev) => ({
+      ...prev,
+      [sectionTitle]: !prev[sectionTitle],
+    }))
+  }
+
+  // Cycle through field style variants
+  const cycleFieldVariant = () => {
+    const variants = ["default", "modern", "card", "flat"]
+    const currentIndex = variants.indexOf(fieldVariant)
+    const nextIndex = (currentIndex + 1) % variants.length
+    setFieldVariant(variants[nextIndex])
+  }
+
   // Save changes
   const saveChanges = async () => {
     if (!isAdmin) {
@@ -597,7 +704,7 @@ function TempTenderView() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "15px" }}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Award size={20} color="#F69320" style={{ marginRight: "10px" }} />
-            <StyledTitle level={2}>Tender Participant Details</StyledTitle>
+            <StyledTitle level={2}>Tender Details</StyledTitle>
           </div>
 
           {isAdmin && (
@@ -687,15 +794,6 @@ function TempTenderView() {
                 </div>
               )}
               <div style={{ fontSize: "14px", fontWeight: "600", marginTop: "5px" }}>Tender</div>
-              {/* {isPdfUrl(getValueByChkId(studentPhotoChkId)) && (
-                <StyledButton
-                  style={{ marginTop: "10px", padding: "6px 12px", fontSize: "12px" }}
-                  onClick={() => openFileInNewTab(getValueByChkId(studentPhotoChkId))}
-                >
-                  <FileText size={14} style={{ marginRight: "5px" }} />
-                  View PDF
-                </StyledButton>
-              )} */}
             </div>
 
             {/* Key Details */}
@@ -709,7 +807,12 @@ function TempTenderView() {
                 {fields
                   .filter((f, idx) => idx < 4 && !f.isImage && !f.isPdf)
                   .map((field, idx) => (
-                    <StyledFieldBox key={idx} style={{ backgroundColor: "white" }} isEditing={isEditing}>
+                    <StyledFieldBox
+                      key={idx}
+                      style={{ backgroundColor: "white" }}
+                      isEditing={isEditing}
+                      variant={fieldVariant}
+                    >
                       <StyledFieldLabel>
                         {getIconForField(field.label)}
                         {field.label}
@@ -737,7 +840,7 @@ function TempTenderView() {
               {fields
                 .filter((f, idx) => idx >= 4 && !f.isImage && !f.isPdf)
                 .map((field, idx) => (
-                  <StyledFieldBox key={idx} isEditing={isEditing}>
+                  <StyledFieldBox key={idx} isEditing={isEditing} variant={fieldVariant}>
                     <StyledFieldLabel>
                       {getIconForField(field.label)}
                       {field.label}
@@ -757,7 +860,7 @@ function TempTenderView() {
               {fields
                 .filter((f) => f.isImage || f.isPdf)
                 .map((field, idx) => (
-                  <StyledFieldBox key={`file-${idx}`} isEditing={isEditing}>
+                  <StyledFieldBox key={`file-${idx}`} isEditing={isEditing} variant={fieldVariant}>
                     <StyledFieldLabel>
                       {field.isPdf ? <FileText size={16} /> : <ImageIcon size={16} />}
                       {field.label}
@@ -794,6 +897,13 @@ function TempTenderView() {
     )
   }
 
+  const getGridColumns = () => {
+    if (windowWidth < 480) return "1fr"
+    if (windowWidth < 768) return "1fr 1fr"
+    if (windowWidth < 1200) return "repeat(3, 1fr)"
+    return "repeat(4, 1fr)"
+  }
+
   const renderSection = (title, checkpointIds) => {
     const sectionData = details.filter((item) => {
       const baseId = Number.parseInt(item.ChkId.toString().split("_")[0])
@@ -813,51 +923,64 @@ function TempTenderView() {
       }
     }
 
-    // Group data by parent ID for better organization
-    const groupedData = {}
-    sectionData.forEach((item) => {
-      const baseId = item.ChkId.toString().split("_")[0]
-      if (!groupedData[baseId]) {
-        groupedData[baseId] = []
-      }
-      groupedData[baseId].push(item)
-    })
+    const isCollapsed = collapsedSections[title]
+    const itemCount = sectionData.length
+
+    // Get icon based on section title
+    let sectionIcon
+    if (title.toLowerCase().includes("published")) {
+      sectionIcon = <FileText size={20} color="white" />
+    } else if (title.toLowerCase().includes("participated")) {
+      sectionIcon = <Briefcase size={20} color="white" />
+    } else if (title.toLowerCase().includes("opened")) {
+      sectionIcon = <FileCheck size={20} color="white" />
+    } else if (title.toLowerCase().includes("awarded")) {
+      sectionIcon = <Award size={20} color="white" />
+    } else {
+      sectionIcon = <FileCheck size={20} color="white" />
+    }
 
     return (
-      <StyledCard key={title}>
-        <div style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
-          <FileCheck size={20} color="#F69320" style={{ marginRight: "10px" }} />
-          <StyledTitle level={2}>{title}</StyledTitle>
-        </div>
-        <StyledDivider />
+      <div key={title} style={{ marginBottom: "25px" }}>
+        <StyledSectionHeader
+          title={title}
+          icon={sectionIcon}
+          onToggle={() => toggleSectionCollapse(title)}
+          isCollapsed={isCollapsed}
+          count={itemCount}
+        />
 
-        {Object.entries(groupedData).map(([parentId, items], groupIndex) => (
-          <div key={`group-${parentId}`} style={{ marginBottom: "20px" }}>
-            {items.length > 1 && (
-              <StyledTitle level={3} style={{ marginBottom: "10px", color: "#555" }}>
-                {checkpoints[parentId] || `Group ${groupIndex + 1}`}
-              </StyledTitle>
-            )}
-
+        {!isCollapsed && (
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "10px",
+              padding: "20px",
+              boxShadow: "0 4px 15px rgba(0, 0, 0, 0.05)",
+              border: "1px solid #f0f0f0",
+            }}
+          >
+            {/* Single grid for all items - no grouping */}
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: window.innerWidth < 768 ? "1fr" : "1fr 1fr",
+                gridTemplateColumns: getGridColumns(),
                 gap: "15px",
                 width: "100%",
               }}
             >
-              {items.map((item, index) => {
+              {sectionData.map((item, index) => {
                 const isImage = isImageUrl(item.Value)
                 const isPdf = isPdfUrl(item.Value)
 
                 return (
                   <StyledFieldBox
-                    key={`${parentId}-${index}`}
+                    key={`${item.ChkId}-${index}`}
                     isEditing={isEditing}
+                    variant={fieldVariant}
                     style={{
-                      backgroundColor: isImage || isPdf ? "rgba(246, 147, 32, 0.05)" : "#f9f9f9",
-                      border: isImage || isPdf ? "1px solid rgba(246, 147, 32, 0.2)" : "1px solid #eee",
+                      backgroundColor: isImage || isPdf ? "rgba(246, 147, 32, 0.05)" : undefined,
+                      border: isImage || isPdf ? "1px solid rgba(246, 147, 32, 0.2)" : undefined,
                     }}
                   >
                     <StyledFieldLabel>
@@ -938,8 +1061,8 @@ function TempTenderView() {
               })}
             </div>
           </div>
-        ))}
-      </StyledCard>
+        )}
+      </div>
     )
   }
 
@@ -983,28 +1106,23 @@ function TempTenderView() {
         </div>
 
         {/* Logo with decorative elements */}
-        <div style={{ position: "relative" }}>
-          <div
-            style={{
-              position: "absolute",
-              top: "-10px",
-              right: "-10px",
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              zIndex: 0,
-            }}
-          ></div>
-          <img
-            src={logo || "/placeholder.svg"}
-            alt="Logo"
-            style={{
-              maxHeight: "50px",
-              position: "relative",
-              zIndex: 1,
-              filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
-            }}
-          />
+        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <StyledButton onClick={cycleFieldVariant} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+            <Filter size={16} />
+            Style: {fieldVariant.charAt(0).toUpperCase() + fieldVariant.slice(1)}
+          </StyledButton>
+          <div style={{ position: "relative" }}>
+            <img
+              src={logo || "/placeholder.svg"}
+              alt="Logo"
+              style={{
+                maxHeight: "50px",
+                position: "relative",
+                zIndex: 1,
+                filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))",
+              }}
+            />
+          </div>
         </div>
       </StyledHeader>
 

@@ -121,13 +121,13 @@ function TenderList() {
             {currentRecords.length > 0 ? (
               currentRecords.map((record) => {
                 const nameEntry = record.chkData?.find(
-                  (chk) => chk.ChkId === "3"
+                  (chk) => chk.ChkId === "4"
                 );
                 const nameEntry2 = record.chkData?.find(
-                  (chk) => chk.ChkId === "6"
+                  (chk) => chk.ChkId === "7"
                 );
                 const nameEntry3 = record.chkData?.find(
-                  (chk) => chk.ChkId === "29"
+                  (chk) => chk.ChkId === "60"
                 );
 
                 return (

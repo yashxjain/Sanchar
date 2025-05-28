@@ -153,6 +153,7 @@ function BuyerList() {
                     <TableCell sx={{ color: "white", fontWeight: "bold" }}>Zone Name</TableCell>
                     <TableCell sx={{ color: "white", fontWeight: "bold" }}>Division ID</TableCell>
                     <TableCell sx={{ color: "white", fontWeight: "bold" }}>Division Name</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Section Name</TableCell>
                     <TableCell sx={{ color: "white", fontWeight: "bold" }}>Station ID</TableCell>
                     <TableCell sx={{ color: "white", fontWeight: "bold" }}>Station Name</TableCell>
                   </TableRow>
@@ -179,6 +180,7 @@ function BuyerList() {
                         <TableCell>{buyer.ZoneName}</TableCell>
                         <TableCell>{buyer.DivisionID}</TableCell>
                         <TableCell>{buyer.DivisionName}</TableCell>
+                        <TableCell>{buyer.SectionName}</TableCell>
                         <TableCell>{buyer.StationID}</TableCell>
                         <TableCell>{buyer.StationName}</TableCell>
                       </TableRow>

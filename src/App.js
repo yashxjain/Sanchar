@@ -19,8 +19,8 @@ import Buyer from './pages/Buyer';
 import ViewTender from './pages/ViewTender';
 import Participant from './pages/Participant';
 import User from './pages/User';
-import LOA from './pages/LOA';
 import ViewLOA from './pages/ViewLOA';
+import Projects from './pages/Projects';
 function App() {
    useEffect(() => {
         const handleRightClick = (event) => {
@@ -55,10 +55,6 @@ function App() {
             <Route path="/tender/view/:activityId" element={<PrivateRoute element={ViewTender} />} />
             <Route path="/loa/view/:activityId" element={<PrivateRoute element={ViewLOA} />} />
 
-            <Route path="/loa" element={<PrivateRoute element={LOA} />} />
-            <Route path="/draft-list" element={<PrivateRoute element={LOA} />} />
-            <Route path="/create-loa" element={<PrivateRoute element={LOA} />} />
-            <Route path="/edit-loa/:ActivityId" element={<PrivateRoute element={LOA} />} />
 
             <Route path="/buyer" element={<PrivateRoute element={Buyer} />} />
             <Route path="/new-buyer" element={<PrivateRoute element={Buyer} />} />
@@ -68,6 +64,10 @@ function App() {
             <Route path="/participant" element={<PrivateRoute element={Participant} />} />
             <Route path="/new-participant" element={<PrivateRoute element={Participant} />} />
             
+            <Route path="/projects" element={<PrivateRoute element={Projects} />} />
+            <Route path="/project/view/:ActivityId" element={<PrivateRoute element={Projects} />} />
+
+
             <Route path="/menus" element={<PrivateRoute element={Menus} />} />
             <Route path="/add-menu" element={<PrivateRoute element={Menus} />} />
 

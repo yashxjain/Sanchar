@@ -26,6 +26,7 @@ function AddNewBuyer() {
     DivisionID: "",
     DivisionName: "",
     DivisionAddress: "",
+    SectionName: "",
     StationID: "",
     StationName: "",
     StationAddress: "",
@@ -34,6 +35,7 @@ function AddNewBuyer() {
   const [buyerData, setBuyerData] = useState([])
   const [zoneMode, setZoneMode] = useState("existing")
   const [divisionMode, setDivisionMode] = useState("existing")
+  const [sectionMode, setSectionMode] = useState("existing")
 
   const [loading, setLoading] = useState(false)
   const [dataLoading, setDataLoading] = useState(true)
@@ -89,6 +91,15 @@ function AddNewBuyer() {
     ).values(),
   ]
 
+  // Unique Sections with only name
+  const uniqueSections = [
+    ...new Set(
+      buyerData
+        .map((b) => b.SectionName)
+        .filter((name) => name && name.trim() !== ""), // Filter out empty/null section names
+    ),
+  ]
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
@@ -121,7 +132,18 @@ function AddNewBuyer() {
     }
   }
 
-  // When switching to "new" mode for Zone or Division, clear address field
+  // When selecting existing Section, fill only SectionName
+  const handleSectionChange = (_e, value) => {
+    if (value) {
+      setForm({
+        ...form,
+        SectionName: value,
+      })
+    } else {
+      setForm({ ...form, SectionName: "" })
+    }
+  }
+
   const handleZoneModeChange = (_e, newMode) => {
     if (newMode !== null) {
       setZoneMode(newMode)
@@ -140,6 +162,15 @@ function AddNewBuyer() {
     }
   }
 
+  const handleSectionModeChange = (_e, newMode) => {
+    if (newMode !== null) {
+      setSectionMode(newMode)
+      if (newMode === "new") {
+        setForm({ ...form, SectionName: "" })
+      }
+    }
+  }
+
   const handleSubmit = async () => {
     setLoading(true)
     setSuccessMsg("")
@@ -151,6 +182,7 @@ function AddNewBuyer() {
       !form.ZoneName ||
       !form.DivisionID ||
       !form.DivisionName ||
+      !form.SectionName ||
       !form.StationID ||
       !form.StationName
     ) {
@@ -451,6 +483,78 @@ function AddNewBuyer() {
                 />
               </Grid>
             </>
+          )}
+
+          {/* SECTION MODE TOGGLE */}
+          <Grid item xs={12}>
+            <Typography variant="subtitle1" mb={1} fontWeight={500} color="#555" sx={{ mt: 2 }}>
+              Section Information
+            </Typography>
+            <ToggleButtonGroup
+              value={sectionMode}
+              exclusive
+              onChange={handleSectionModeChange}
+              aria-label="section mode"
+              sx={{
+                mb: 2,
+                "& .MuiToggleButton-root.Mui-selected": {
+                  backgroundColor: "#F69320",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#e08416",
+                  },
+                },
+              }}
+            >
+              <ToggleButton value="existing">Existing Section</ToggleButton>
+              <ToggleButton value="new">New Section</ToggleButton>
+            </ToggleButtonGroup>
+          </Grid>
+
+          {/* SECTION FIELDS */}
+          {sectionMode === "existing" ? (
+            <Grid item xs={12}>
+              <Autocomplete
+                options={uniqueSections}
+                getOptionLabel={(option) => option}
+                value={form.SectionName || null}
+                onChange={handleSectionChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select Section"
+                    fullWidth
+                    sx={{
+                      "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#F69320",
+                      },
+                      "& .MuiInputLabel-root.Mui-focused": {
+                        color: "#F69320",
+                      },
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+          ) : (
+            <Grid item xs={12}>
+              <TextField
+                name="SectionName"
+                label="Section Name"
+                value={form.SectionName}
+                onChange={handleChange}
+                fullWidth
+                required
+                sx={{
+                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#F69320",
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "#F69320",
+                  },
+                }}
+              />
+            </Grid>
           )}
 
           {/* STATION FIELDS (always new) */}

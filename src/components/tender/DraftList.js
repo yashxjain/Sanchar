@@ -147,9 +147,9 @@ function DraftList() {
           <tbody>
             {currentRecords.length > 0 ? (
               currentRecords.map((record) => {
-                const nameEntry = record.chkData?.find((chk) => chk.ChkId === "3");
-                const nameEntry2 = record.chkData?.find((chk) => chk.ChkId === "6");
-                const nameEntry3 = record.chkData?.find((chk) => chk.ChkId === "29");
+                const nameEntry = record.chkData?.find((chk) => chk.ChkId === "4");
+                const nameEntry2 = record.chkData?.find((chk) => chk.ChkId === "7");
+                const nameEntry3 = record.chkData?.find((chk) => chk.ChkId === "60");
                 const timeSince = getTimeSince(record.LastUpdate);
 
                 return (

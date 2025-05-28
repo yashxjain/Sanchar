@@ -20,6 +20,7 @@ import { useAuth } from "./auth/AuthContext"
 import MapIcon from "@mui/icons-material/Map"
 import DynamicFormIcon from "@mui/icons-material/DynamicForm"
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone"
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import HRSmileLogo from "../assets/images (1).png"
 
 function Sidebar() {
@@ -41,6 +42,7 @@ function Sidebar() {
     { path: "/buyer", name: "Buyers", icon: <Person /> },
     { path: "/directory", name: "Directory", icon: <ContactPhoneIcon /> },
     { path: "/participant", name: "Participants", icon: <Person /> },
+    // { path: "/projects", name: "Projects", icon: <AccountTreeIcon /> },
   ]
 
   const userModules = user?.modules || []

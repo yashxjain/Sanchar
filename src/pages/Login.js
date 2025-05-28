@@ -115,8 +115,7 @@ export default function LoginPage() {
   <Paper
     elevation={10}
     sx={{
-      width: { xs: '90%', sm: '350px' },
-     
+      width: { xs: '90%', sm: '400px' },
       padding: 4,
       borderRadius: 3,
       backgroundColor: 'rgba(255, 255, 255, 0.85)', // Semi-transparent white
