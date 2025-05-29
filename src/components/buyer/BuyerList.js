@@ -21,6 +21,11 @@ import {
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { Plus, Search } from 'lucide-react'
+import {
+  Dialog, DialogTitle, DialogContent, DialogActions
+} from "@mui/material"
+
+
 
 function BuyerList() {
   const [buyers, setBuyers] = useState([])
@@ -30,6 +35,9 @@ function BuyerList() {
   const [searchTerm, setSearchTerm] = useState("")
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(15)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+const [selectedBuyer, setSelectedBuyer] = useState(null)
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -89,7 +97,54 @@ function BuyerList() {
 
   return (
     <Box>
-      
+      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} fullWidth maxWidth="md">
+  <DialogTitle>Edit Buyer</DialogTitle>
+  <DialogContent>
+    {selectedBuyer && (
+      <Box mt={2} display="flex" flexDirection="column" gap={2}>
+        <TextField label="Zone ID" value={selectedBuyer.ZoneID} onChange={e => setSelectedBuyer({ ...selectedBuyer, ZoneID: e.target.value })} />
+        <TextField label="Zone Name" value={selectedBuyer.ZoneName} onChange={e => setSelectedBuyer({ ...selectedBuyer, ZoneName: e.target.value })} />
+        <TextField label="Zone Address" value={selectedBuyer.ZoneAddress} onChange={e => setSelectedBuyer({ ...selectedBuyer, ZoneAddress: e.target.value })} />
+        <TextField label="Division ID" value={selectedBuyer.DivisionID} onChange={e => setSelectedBuyer({ ...selectedBuyer, DivisionID: e.target.value })} />
+        <TextField label="Division Name" value={selectedBuyer.DivisionName} onChange={e => setSelectedBuyer({ ...selectedBuyer, DivisionName: e.target.value })} />
+        <TextField label="Division Address" value={selectedBuyer.DivisionAddress} onChange={e => setSelectedBuyer({ ...selectedBuyer, DivisionAddress: e.target.value })} />
+        <TextField label="Station ID" value={selectedBuyer.StationID} onChange={e => setSelectedBuyer({ ...selectedBuyer, StationID: e.target.value })} />
+        <TextField label="Station Name" value={selectedBuyer.StationName} onChange={e => setSelectedBuyer({ ...selectedBuyer, StationName: e.target.value })} />
+        <TextField label="Station Address" value={selectedBuyer.StationAddress} onChange={e => setSelectedBuyer({ ...selectedBuyer, StationAddress: e.target.value })} />
+        <TextField label="Section Name" value={selectedBuyer.SectionName} onChange={e => setSelectedBuyer({ ...selectedBuyer, SectionName: e.target.value })} />
+      </Box>
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
+    <Button
+      variant="contained"
+      sx={{ backgroundColor: "#F69320" }}
+      onClick={async () => {
+        try {
+          const res = await axios.post("https://namami-infotech.com/SANCHAR/src/buyer/update_buyer.php", selectedBuyer)
+          if (res.data.success) {
+            alert("Buyer updated successfully")
+            setEditDialogOpen(false)
+            setBuyers(prev =>
+              prev.map(b => (b.BuyerID === selectedBuyer.BuyerID ? selectedBuyer : b))
+            )
+            setFilteredBuyers(prev =>
+              prev.map(b => (b.BuyerID === selectedBuyer.BuyerID ? selectedBuyer : b))
+            )
+            
+          } else {
+            alert("Update failed: " + res.data.message)
+          }
+        } catch (err) {
+          alert("Error updating buyer.")
+        }
+      }}
+    >
+      Save
+    </Button>
+  </DialogActions>
+</Dialog>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Typography variant="h5" fontWeight="bold" color="#333">
             Buyer List
@@ -156,6 +211,8 @@ function BuyerList() {
                     <TableCell sx={{ color: "white", fontWeight: "bold" }}>Section Name</TableCell>
                     <TableCell sx={{ color: "white", fontWeight: "bold" }}>Station ID</TableCell>
                     <TableCell sx={{ color: "white", fontWeight: "bold" }}>Station Name</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: "bold" }}>Actions</TableCell>
+
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -183,6 +240,12 @@ function BuyerList() {
                         <TableCell>{buyer.SectionName}</TableCell>
                         <TableCell>{buyer.StationID}</TableCell>
                         <TableCell>{buyer.StationName}</TableCell>
+                        <TableCell>
+  <Button size="small" onClick={() => { setSelectedBuyer(buyer); setEditDialogOpen(true); }}>
+    Edit
+  </Button>
+</TableCell>
+
                       </TableRow>
                     ))
                   )}
@@ -212,11 +275,7 @@ function BuyerList() {
               }}
             />
           </>
-        )}
-
-        {/* Summary stats */}
-       
-      
+        )}       
     </Box>
   )
 }

@@ -1,158 +1,165 @@
 "use client"
+
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
 import { format } from "date-fns"
+import { motion } from "framer-motion"
+import { useParams } from "react-router-dom"
 import {
-  CalendarToday,
-  CheckCircle,
-  Schedule,
-  LocationOn,
-  Person,
-  Work,
-  ChevronLeft,
-  ChevronRight,
-} from "@mui/icons-material"
-import {
-  Button,
+  Box,
   Card,
   CardHeader,
   CardContent,
-  CardActions,
   Typography,
-  Tabs,
-  Tab,
-  Box,
+  Button,
   TextField,
-  MenuItem,
   Select,
-  InputLabel,
+  MenuItem,
   FormControl,
+  InputLabel,
   Avatar,
   Chip,
-  Divider,
-  Badge,
   Paper,
   List,
   ListItem,
-  ListItemAvatar,
+  ListItemIcon,
   ListItemText,
+  ListItemAvatar,
+  Checkbox,
+  Alert,
+  Grid,
   CircularProgress,
+  Divider,
+  Snackbar,
 } from "@mui/material"
+import { CheckCircle, LocationOn, Person, Work, Add, CalendarToday, Search } from "@mui/icons-material"
 import { DatePicker } from "@mui/x-date-pickers/DatePicker"
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
 import { styled } from "@mui/material/styles"
-import { toast } from "react-toastify"
-import { useParams } from "react-router-dom"
 
 const milestones = [
   {
     label: "Civil Work",
-    value: "1",
-    icon: (
-      <Badge badgeContent="1" color="primary" overlap="circular">
-        <Avatar sx={{ bgcolor: "primary.main", width: 24, height: 24 }} />
-      </Badge>
-    ),
-    color: "primary",
+    value: "2",
+    color: "#2196f3",
+    bgColor: "#e3f2fd",
   },
   {
     label: "Installation",
-    value: "2",
-    icon: (
-      <Badge badgeContent="2" color="secondary" overlap="circular">
-        <Avatar sx={{ bgcolor: "secondary.main", width: 24, height: 24 }} />
-      </Badge>
-    ),
-    color: "secondary",
+    value: "3",
+    color: "#9c27b0",
+    bgColor: "#f3e5f5",
   },
   {
     label: "Antenna Tunning",
-    value: "3",
-    icon: (
-      <Badge badgeContent="3" color="success" overlap="circular">
-        <Avatar sx={{ bgcolor: "success.main", width: 24, height: 24 }} />
-      </Badge>
-    ),
-    color: "success",
+    value: "4",
+    color: "#4caf50",
+    bgColor: "#e8f5e8",
   },
   {
     label: "Final Check & Completion Certificate",
-    value: "4",
-    icon: (
-      <Badge badgeContent="4" color="warning" overlap="circular">
-        <Avatar sx={{ bgcolor: "warning.main", width: 24, height: 24 }} />
-      </Badge>
-    ),
-    color: "warning",
+    value: "5",
+    color: "#ff9800",
+    bgColor: "#fff3e0",
   },
 ]
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  maxWidth: "700px",
-  margin: "auto",
-  boxShadow: theme.shadows[10],
-  background: "rgba(255, 255, 255, 0.9)",
-  backdropFilter: "blur(10px)",
+  margin: "0 auto",
+  borderRadius: 16,
+  border: `2px solid #ffcc80`,
+  boxShadow: "0 8px 32px rgba(255, 152, 0, 0.1)",
 }))
 
-const StyledTabs = styled(Tabs)({
-  "& .MuiTabs-indicator": {
-    backgroundColor: "#fb923c",
-  },
-})
-
-const StyledTab = styled(Tab)({
-  "&.Mui-selected": {
-    color: "#fb923c",
-  },
-})
-
-const OrangeButton = styled(Button)({
-  backgroundColor: "#fb923c",
+const MilestoneButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "milestoneColor" && prop !== "milestoneBg",
+})(({ theme, isSelected, milestoneColor, milestoneBg }) => ({
+  width: "100%",
+  padding: "16px",
+  textAlign: "left",
+  justifyContent: "flex-start",
+  borderRadius: 12,
+  border: `2px solid ${isSelected ? milestoneColor : theme.palette.divider}`,
+  backgroundColor: isSelected ? milestoneBg : "transparent",
+  color: isSelected ? milestoneColor : theme.palette.text.primary,
   "&:hover": {
-    backgroundColor: "#ea580c",
+    backgroundColor: milestoneBg,
+    borderColor: milestoneColor,
   },
-})
+  textTransform: "none",
+  height: "auto",
+  minHeight: 80,
+}))
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props
+const OrangeButton = styled(Button)(({ theme }) => ({
+  backgroundColor: "#ff9800",
+  color: "white",
+  borderRadius: 25,
+  padding: "12px 32px",
+  fontSize: "16px",
+  fontWeight: 600,
+  textTransform: "none",
+  "&:hover": {
+    backgroundColor: "#f57c00",
+  },
+  "&:disabled": {
+    backgroundColor: "#ffcc80",
+  },
+}))
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  )
-}
+const StyledListItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== "isSelected",
+})(({ theme, isSelected }) => ({
+  borderRadius: 8,
+  margin: "4px 0",
+  backgroundColor: isSelected ? "#fff3e0" : "transparent",
+  border: `1px solid ${isSelected ? "#ff9800" : "transparent"}`,
+  "&:hover": {
+    backgroundColor: "#fff3e0",
+  },
+}))
 
 export default function TaskAssignment() {
-    const {ActivityId} = useParams()
-    console.log("ActivityId:", ActivityId)
+  const { ActivityId } = useParams() || { ActivityId: "1" }
   const [milestone, setMilestone] = useState("")
   const [stations, setStations] = useState([])
-  const [station, setStation] = useState(null)
+  const [selectedStations, setSelectedStations] = useState([])
   const [technicians, setTechnicians] = useState([])
   const [technician, setTechnician] = useState(null)
   const [date, setDate] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState(0)
+  const [submissionResults, setSubmissionResults] = useState([])
+  const [stationSearch, setStationSearch] = useState("")
+
+  // Snackbar state for notifications
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  })
+
+  const showNotification = (message, severity = "success") => {
+    setSnackbar({
+      open: true,
+      message,
+      severity,
+    })
+  }
+
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }))
+  }
+
   useEffect(() => {
     // Fetch stations
     fetch(`https://namami-infotech.com/SANCHAR/src/tender/tender_stations.php?ActivityId=${ActivityId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.stations)) {
-          // Convert string array to Station objects
           const stationObjects = data.stations.map((stationName, index) => ({
             id: (index + 1).toString(),
             name: stationName,
-            location: `Location for ${stationName}`, // You can modify this based on your needs
+            location: `Location for ${stationName}`,
           }))
           setStations(stationObjects)
         } else {
@@ -172,68 +179,17 @@ export default function TaskAssignment() {
         }
       })
       .catch(() => setTechnicians([]))
-  }, ActivityId)
+  }, [ActivityId])
 
-  const handleSubmit = () => {
-    if (!milestone || !station || !technician || !date) {
-      toast.error("Please fill in all required fields before assigning the task.")
-      return
-    }
-
-    setIsLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
-
-      // Prepare submission data
-      const submitData = {
-        milestone,
-        station: station.id,
-        technician: technician.EmpId,
-        tentativeDate: format(date, "yyyy-MM-dd"),
+  const handleStationToggle = (station) => {
+    setSelectedStations((prev) => {
+      const isSelected = prev.some((s) => s.id === station.id)
+      if (isSelected) {
+        return prev.filter((s) => s.id !== station.id)
+      } else {
+        return [...prev, station]
       }
-
-      console.log("Assign Task Data:", submitData)
-
-      toast.success(
-        `${technician.Name} has been assigned to ${station.name} for ${
-          milestones.find((m) => m.value === milestone)?.label
-        }.`,
-      )
-
-      // Reset form
-      setActiveTab(0)
-      setMilestone("")
-      setStation(null)
-      setTechnician(null)
-      setDate(null)
-    }, 1500)
-  }
-
-  const canProceed = () => {
-    if (activeTab === 0 && !milestone) return false
-    if (activeTab === 1 && !station) return false
-    if (activeTab === 2 && !technician) return false
-    if (activeTab === 3 && !date) return false
-    return true
-  }
-
-  const handleNext = () => {
-    if (canProceed()) {
-      setActiveTab((prev) => Math.min(prev + 1, 3))
-    } else {
-      toast.error("Please make a selection before proceeding.")
-    }
-  }
-
-  const handleBack = () => {
-    setActiveTab((prev) => Math.max(prev - 1, 0))
-  }
-
-  const handleStationChange = (event) => {
-    const selectedStation = stations.find((s) => s.id === event.target.value)
-    setStation(selectedStation || null)
+    })
   }
 
   const handleTechnicianChange = (event) => {
@@ -241,343 +197,467 @@ export default function TaskAssignment() {
     setTechnician(selectedTechnician || null)
   }
 
+  const handleSubmit = async () => {
+    if (!milestone || selectedStations.length === 0 || !technician || !date) {
+      showNotification("Please fill in all required fields before assigning the task.", "error")
+      return
+    }
+
+    setIsLoading(true)
+    setSubmissionResults([])
+
+    const selectedMilestone = milestones.find((m) => m.value === milestone)
+    const results = []
+
+    try {
+      for (const station of selectedStations) {
+        const taskData = {
+          Milestone: selectedMilestone.label,
+          MenuId: milestone,
+          EmpName: technician.Name,
+          EmpId: technician.EmpId,
+          Station: station.name,
+          TargetDate: format(date, "yyyy-MM-dd"),
+        }
+
+        try {
+          const response = await fetch("https://namami-infotech.com/SANCHAR/src/task/add_task.php", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(taskData),
+          })
+
+          const result = await response.json()
+
+          results.push({
+            station: station.name,
+            success: result.success || response.ok,
+            message: result.message || (response.ok ? "Task created successfully" : "Failed to create task"),
+            data: taskData,
+          })
+        } catch (error) {
+          results.push({
+            station: station.name,
+            success: false,
+            message: `Error: ${error.message}`,
+            data: taskData,
+          })
+        }
+      }
+
+      setSubmissionResults(results)
+
+      const successCount = results.filter((r) => r.success).length
+      const failCount = results.length - successCount
+
+      if (successCount === results.length) {
+        showNotification(`All ${successCount} tasks assigned successfully!`, "success")
+      } else if (successCount > 0) {
+        showNotification(`${successCount} tasks assigned successfully, ${failCount} failed.`, "warning")
+      } else {
+        showNotification("All task assignments failed.", "error")
+      }
+
+      if (successCount === results.length) {
+        setMilestone("")
+        setSelectedStations([])
+        setTechnician(null)
+        setDate(null)
+      }
+    } catch (error) {
+      showNotification("An error occurred while assigning tasks.", "error")
+      console.error("Submission error:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const selectedMilestone = milestones.find((m) => m.value === milestone)
+  const filteredStations = stations.filter((station) =>
+    station.name.toLowerCase().includes(stationSearch.toLowerCase()),
+  )
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      style={{ width: "100%", maxWidth: "700px", margin: "0 auto", maxHeight: "70vh", overflowY: "auto" }}
-    >
-      <StyledCard>
-        <CardHeader
-          title={
-            <Typography
-              variant="h4"
-              component="div"
-              sx={{
-                textAlign: "center",
-                background: "linear-gradient(to right, #f97316, #f59e0b)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                fontWeight: "bold",
-              }}
-            >
-              Assign Task to Technician
-            </Typography>
-          }
-          subheader="Complete the form to assign a new task"
-          subheaderTypographyProps={{ textAlign: "center" }}
-        />
-
-        <StyledTabs
-          value={activeTab}
-          onChange={(e, newValue) => setActiveTab(newValue)}
-          variant="fullWidth"
-          sx={{ px: 2 }}
-        >
-          <StyledTab label={activeTab === 0 ? "Milestone" : "1"} disabled={activeTab !== 0 && !milestone} />
-          <StyledTab label={activeTab === 1 ? "Station" : "2"} disabled={activeTab !== 1 && !station} />
-          <StyledTab label={activeTab === 2 ? "Technician" : "3"} disabled={activeTab !== 2 && !technician} />
-          <StyledTab label={activeTab === 3 ? "Date" : "4"} disabled={activeTab !== 3 && !date} />
-        </StyledTabs>
-
-        <CardContent>
-          <TabPanel value={activeTab} index={0}>
-            <Typography variant="subtitle1" gutterBottom>
-              Select Milestone
-            </Typography>
-            <Box sx={{ display: "grid", gridTemplateColumns: "1fr", gap: 2 }}>
-              {milestones.map((item) => (
-                <motion.div key={item.value} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button
-                    variant="outlined"
-                    fullWidth
-                    sx={{
-                      justifyContent: "flex-start",
-                      textAlign: "left",
-                      py: 2,
-                      px: 3,
-                      borderColor: milestone === item.value ? `${item.color}.main` : undefined,
-                      backgroundColor: milestone === item.value ? `${item.color}.light` : undefined,
-                    }}
-                    onClick={() => setMilestone(item.value)}
-                    startIcon={item.icon}
-                  >
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-                      <Typography variant="body1" fontWeight="medium">
-                        {item.label}
-                      </Typography>
-                      <Chip
-                        label={`Phase ${item.value}`}
-                        size="small"
-                        sx={{
-                          mt: 1,
-                          backgroundColor: `${item.color}.light`,
-                          color: `${item.color}.dark`,
-                        }}
-                      />
-                    </Box>
-                    {milestone === item.value && <CheckCircle sx={{ ml: "auto", color: `${item.color}.main` }} />}
-                  </Button>
-                </motion.div>
-              ))}
-            </Box>
-          </TabPanel>
-
-          <TabPanel value={activeTab} index={1}>
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel id="station-label">Select Station</InputLabel>
-              <Select
-                labelId="station-label"
-                id="station-select"
-                value={station?.id || ""}
-                label="Select Station"
-                onChange={handleStationChange}
-              >
-                <MenuItem disabled value="">
-                  <em>Select station...</em>
-                </MenuItem>
-                {stations.map((s) => (
-                  <MenuItem key={s.id} value={s.id}>
-                    <ListItemText
-                      primary={s.name}
-                      secondary={s.location}
-                      secondaryTypographyProps={{ variant: "caption" }}
-                    />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            {station && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <Paper
-                  elevation={0}
-                  sx={{ p: 2, bgcolor: "orange.50", border: "1px solid", borderColor: "orange.100" }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
-                    <Avatar sx={{ bgcolor: "orange.100", color: "orange.500" }}>
-                      <LocationOn />
-                    </Avatar>
-                    <Box>
-                      <Typography fontWeight="medium">{station.name}</Typography>
-                      {station.location && (
-                        <Typography variant="body2" color="text.secondary">
-                          {station.location}
-                        </Typography>
-                      )}
-                    </Box>
-                  </Box>
-                </Paper>
-              </motion.div>
-            )}
-          </TabPanel>
-
-          <TabPanel value={activeTab} index={2}>
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel id="technician-label">Select Technician</InputLabel>
-              <Select
-                labelId="technician-label"
-                id="technician-select"
-                value={technician?.EmpId || ""}
-                label="Select Technician"
-                onChange={handleTechnicianChange}
-              >
-                <MenuItem disabled value="">
-                  <em>Select technician...</em>
-                </MenuItem>
-                {technicians.map((tech) => (
-                  <MenuItem key={tech.EmpId} value={tech.EmpId}>
-                    <ListItemAvatar>
-                      <Avatar src={tech.Avatar || undefined}>{!tech.Avatar && <Person />}</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={tech.Name}
-                      secondary={tech.Designation}
-                      secondaryTypographyProps={{ variant: "caption" }}
-                    />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            {technician && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <Paper
-                  elevation={0}
-                  sx={{ p: 3, bgcolor: "orange.50", border: "1px solid", borderColor: "orange.100" }}
-                >
-                  <Box sx={{ display: "flex", gap: 3 }}>
-                    <Avatar
-                      src={technician.Avatar || undefined}
-                      sx={{ width: 56, height: 56, border: "2px solid", borderColor: "orange.200" }}
-                    >
-                      {!technician.Avatar && <Person fontSize="large" />}
-                    </Avatar>
-                    <Box>
-                      <Typography fontWeight="medium">{technician.Name}</Typography>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "text.secondary", mt: 0.5 }}>
-                        <Work fontSize="small" />
-                        <Typography variant="body2">{technician.Designation}</Typography>
-                      </Box>
-
-                      {technician.Skills && (
-                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1.5 }}>
-                          {technician.Skills.map((skill, i) => (
-                            <Chip key={i} label={skill} size="small" />
-                          ))}
-                        </Box>
-                      )}
-
-                      {technician.Rating && (
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1.5 }}>
-                          {[...Array(5)].map((_, i) => (
-                            <Box
-                              key={i}
-                              component="span"
-                              sx={{
-                                color: i < Math.floor(technician.Rating || 0) ? "amber.400" : "grey.300",
-                                fontSize: "1rem",
-                              }}
-                            >
-                              ★
-                            </Box>
-                          ))}
-                          <Typography variant="caption" color="text.secondary">
-                            {technician.Rating}
-                          </Typography>
-                        </Box>
-                      )}
-                    </Box>
-                  </Box>
-                </Paper>
-              </motion.div>
-            )}
-          </TabPanel>
-
-          <TabPanel value={activeTab} index={3}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="Tentative Completion Date"
-                value={date}
-                onChange={(newValue) => setDate(newValue)}
-                minDate={new Date()}
-                renderInput={(params) => <TextField {...params} fullWidth />}
-                components={{
-                  OpenPickerIcon: CalendarToday,
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        style={{ width: "100%", padding: "1px" }}
+      >
+        <StyledCard>
+          <CardHeader
+            sx={{
+              textAlign: "center",
+              pb: 2,
+              background: "linear-gradient(135deg, #fff3e0 0%, #ffcc80 100%)",
+            }}
+            title={
+              <Typography
+                variant="h4"
+                component="div"
+                sx={{
+                  background: "linear-gradient(45deg, #ff9800, #f57c00)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  fontWeight: "bold",
+                  mb: 1,
                 }}
-              />
-            </LocalizationProvider>
+              >
+                Assign Task to Technician
+              </Typography>
+            }
+            subheader={
+              <Typography variant="body2" color="text.secondary">
+                Complete the form to assign tasks to multiple stations
+              </Typography>
+            }
+          />
 
-            {date && milestone && station && technician && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+          <CardContent sx={{ p: 3 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              {/* Milestone Selection */}
+              <Box>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: "#ff9800" }}>
+                  Select Milestone
+                </Typography>
+                <Grid container spacing={2}>
+                  {milestones.map((item) => (
+                    <Grid item xs={12} sm={6} key={item.value}>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                        <MilestoneButton
+                          isSelected={milestone === item.value}
+                          milestoneColor={item.color}
+                          milestoneBg={item.bgColor}
+                          onClick={() => setMilestone(item.value)}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              width: "100%",
+                            }}
+                          >
+                            <Box>
+                              <Typography variant="body1" fontWeight="medium">
+                                {item.label}
+                              </Typography>
+                              <Chip
+                                label={`Phase ${item.value-1}`}
+                                size="small"
+                                sx={{
+                                  mt: 1,
+                                  backgroundColor: item.bgColor,
+                                  color: item.color,
+                                  fontWeight: 600,
+                                }}
+                              />
+                            </Box>
+                            {milestone === item.value && <CheckCircle sx={{ color: item.color, fontSize: 28 }} />}
+                          </Box>
+                        </MilestoneButton>
+                      </motion.div>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+
+              <Divider sx={{ borderColor: "#ffcc80" }} />
+
+              <Grid container spacing={3}>
+                {/* Station Selection */}
+                <Grid item xs={12} md={6}>
+                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: "#ff9800" }}>
+                    Select Stations ({selectedStations.length} selected)
+                  </Typography>
+
+                  <TextField
+                    fullWidth
+                    placeholder="Search stations..."
+                    value={stationSearch}
+                    onChange={(e) => setStationSearch(e.target.value)}
+                    InputProps={{
+                      startAdornment: <Search sx={{ color: "#ff9800", mr: 1 }} />,
+                    }}
+                    sx={{ mb: 2 }}
+                  />
+
+                  <Paper
+                    sx={{
+                      maxHeight: 280,
+                      overflow: "auto",
+                      border: "2px solid #ffcc80",
+                      borderRadius: 2,
+                    }}
+                  >
+                    <List dense>
+                      {filteredStations.length > 0 ? (
+                        filteredStations.map((station) => {
+                          const isSelected = selectedStations.some((s) => s.id === station.id)
+                          return (
+                            <StyledListItem
+                              key={station.id}
+                              button
+                              onClick={() => handleStationToggle(station)}
+                              isSelected={isSelected}
+                            >
+                              <ListItemIcon>
+                                <Checkbox
+                                  checked={isSelected}
+                                  sx={{
+                                    color: "#ff9800",
+                                    "&.Mui-checked": {
+                                      color: "#ff9800",
+                                    },
+                                  }}
+                                />
+                              </ListItemIcon>
+                              <ListItemAvatar>
+                                <Avatar sx={{ bgcolor: "#fff3e0", color: "#ff9800" }}>
+                                  <LocationOn />
+                                </Avatar>
+                              </ListItemAvatar>
+                              <ListItemText
+                                primary={
+                                  <Typography variant="body2" fontWeight="medium">
+                                    {station.name}
+                                  </Typography>
+                                }
+                                secondary={
+                                  <Typography variant="caption" color="text.secondary">
+                                    {station.location}
+                                  </Typography>
+                                }
+                              />
+                            </StyledListItem>
+                          )
+                        })
+                      ) : (
+                        <ListItem>
+                          <ListItemText
+                            primary={
+                              <Typography variant="body2" color="text.secondary" textAlign="center">
+                                No stations found matching your search
+                              </Typography>
+                            }
+                          />
+                        </ListItem>
+                      )}
+                    </List>
+                  </Paper>
+
+                  {selectedStations.length > 0 && (
+                    <Box sx={{ mt: 2 }}>
+                      <Typography variant="caption" fontWeight="medium" color="#ff9800">
+                        Selected Stations:
+                      </Typography>
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 1 }}>
+                        {selectedStations.map((station) => (
+                          <Chip
+                            key={station.id}
+                            label={station.name}
+                            onDelete={() => handleStationToggle(station)}
+                            size="small"
+                            sx={{
+                              backgroundColor: "#fff3e0",
+                              color: "#ff9800",
+                              "& .MuiChip-deleteIcon": {
+                                color: "#ff9800",
+                              },
+                            }}
+                          />
+                        ))}
+                      </Box>
+                    </Box>
+                  )}
+                </Grid>
+
+                {/* Technician and Date Selection */}
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                    {/* Technician Selection */}
+                    <Box>
+                      <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: "#ff9800" }}>
+                        Select Technician
+                      </Typography>
+                      <FormControl fullWidth>
+                        <InputLabel>Select Technician</InputLabel>
+                        <Select
+                          value={technician?.EmpId || ""}
+                          label="Select Technician"
+                          onChange={handleTechnicianChange}
+                        >
+                          {technicians.map((tech) => (
+                            <MenuItem key={tech.EmpId} value={tech.EmpId}>
+                              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                <Avatar src={tech.Avatar || undefined} sx={{ width: 32, height: 32 }}>
+                                  {!tech.Avatar && <Person />}
+                                </Avatar>
+                                <Box>
+                                  <Typography variant="body2" fontWeight="medium">
+                                    {tech.Name}
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary">
+                                    {tech.Designation}
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+
+                      {technician && (
+                        <Paper
+                          elevation={0}
+                          sx={{
+                            p: 2,
+                            mt: 2,
+                            bgcolor: "#fff3e0",
+                            border: "2px solid #ffcc80",
+                            borderRadius: 2,
+                          }}
+                        >
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                            <Avatar
+                              src={technician.Avatar || undefined}
+                              sx={{ width: 48, height: 48, border: "2px solid #ff9800" }}
+                            >
+                              {!technician.Avatar && <Person />}
+                            </Avatar>
+                            <Box>
+                              <Typography variant="body1" fontWeight="medium">
+                                {technician.Name}
+                              </Typography>
+                              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, color: "text.secondary" }}>
+                                <Work fontSize="small" />
+                                <Typography variant="body2">{technician.Designation}</Typography>
+                              </Box>
+                            </Box>
+                          </Box>
+                        </Paper>
+                      )}
+                    </Box>
+
+                    {/* Date Selection */}
+                    <Box>
+                      <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: "#ff9800" }}>
+                        Target Completion Date
+                      </Typography>
+                      <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DatePicker
+                          label="Target Completion Date"
+                          value={date}
+                          onChange={(newValue) => setDate(newValue)}
+                          minDate={new Date()}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              fullWidth
+                              InputProps={{
+                                ...params.InputProps,
+                                startAdornment: <CalendarToday sx={{ color: "#ff9800", mr: 1 }} />,
+                              }}
+                            />
+                          )}
+                        />
+                      </LocalizationProvider>
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>
+
+              {/* Task Summary */}
+              {milestone && selectedStations.length > 0 && technician && date && (
                 <Paper
                   elevation={0}
-                  sx={{ p: 3, mt: 3, bgcolor: "orange.50", border: "1px solid", borderColor: "orange.100" }}
+                  sx={{
+                    p: 3,
+                    bgcolor: "#fff3e0",
+                    border: "2px solid #ffcc80",
+                    borderRadius: 2,
+                  }}
                 >
-                  <Typography fontWeight="medium" textAlign="center" gutterBottom>
-                    Task Summary
+                  <Typography variant="h6" textAlign="center" gutterBottom sx={{ color: "#ff9800", fontWeight: 600 }}>
+                    Task Assignment Summary
                   </Typography>
-                  <Divider sx={{ my: 1 }} />
-
-                  <List dense>
-                    <ListItem>
-                      {selectedMilestone?.icon}
-                      <ListItemText
-                        primary={
-                          <Typography variant="body2">
-                            <Typography component="span" color="text.secondary">
-                              Milestone:{" "}
-                            </Typography>
-                            <Typography component="span" fontWeight="medium">
-                              {selectedMilestone?.label}
-                            </Typography>
-                          </Typography>
-                        }
-                        sx={{ ml: 2 }}
-                      />
-                    </ListItem>
-
-                    <ListItem>
-                      <LocationOn color="primary" />
-                      <ListItemText
-                        primary={
-                          <Typography variant="body2">
-                            <Typography component="span" color="text.secondary">
-                              Station:{" "}
-                            </Typography>
-                            <Typography component="span" fontWeight="medium">
-                              {station.name}
-                            </Typography>
-                          </Typography>
-                        }
-                        sx={{ ml: 2 }}
-                      />
-                    </ListItem>
-
-                    <ListItem>
-                      <Person color="primary" />
-                      <ListItemText
-                        primary={
-                          <Typography variant="body2">
-                            <Typography component="span" color="text.secondary">
-                              Technician:{" "}
-                            </Typography>
-                            <Typography component="span" fontWeight="medium">
-                              {technician.Name}
-                            </Typography>
-                          </Typography>
-                        }
-                        sx={{ ml: 2 }}
-                      />
-                    </ListItem>
-
-                    <ListItem>
-                      <Schedule color="primary" />
-                      <ListItemText
-                        primary={
-                          <Typography variant="body2">
-                            <Typography component="span" color="text.secondary">
-                              Due Date:{" "}
-                            </Typography>
-                            <Typography component="span" fontWeight="medium">
-                              {format(date, "PPP")}
-                            </Typography>
-                          </Typography>
-                        }
-                        sx={{ ml: 2 }}
-                      />
-                    </ListItem>
-                  </List>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <Typography variant="body2">
+                        <strong>Milestone:</strong> {selectedMilestone?.label}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Typography variant="body2">
+                        <strong>Technician:</strong> {technician.Name}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Typography variant="body2">
+                        <strong>Stations:</strong> {selectedStations.length} selected
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <Typography variant="body2">
+                        <strong>Target Date:</strong> {format(date, "PPP")}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  <Typography
+                    variant="body2"
+                    sx={{ mt: 2, fontStyle: "italic", textAlign: "center", color: "text.secondary" }}
+                  >
+                    This will create {selectedStations.length} separate task(s) for each station.
+                  </Typography>
                 </Paper>
-              </motion.div>
-            )}
-          </TabPanel>
-        </CardContent>
+              )}
 
-        <CardActions sx={{ justifyContent: "space-between", p: 2 }}>
-          <Button variant="outlined" disabled={activeTab === 0} onClick={handleBack} startIcon={<ChevronLeft />}>
-            Back
-          </Button>
+              {/* Submission Results */}
+              {submissionResults.length > 0 && (
+                <Box>
+                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: "#ff9800" }}>
+                    Submission Results
+                  </Typography>
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                    {submissionResults.map((result, index) => (
+                      <Alert key={index} severity={result.success ? "success" : "error"}>
+                        <strong>{result.station}:</strong> {result.message}
+                      </Alert>
+                    ))}
+                  </Box>
+                </Box>
+              )}
 
-          {activeTab !== 3 ? (
-            <OrangeButton variant="contained" onClick={handleNext} endIcon={<ChevronRight />}>
-              Next
-            </OrangeButton>
-          ) : (
-            <OrangeButton
-              variant="contained"
-              onClick={handleSubmit}
-              disabled={isLoading}
-              startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : null}
-            >
-              {isLoading ? "Assigning..." : "Assign Task"}
-            </OrangeButton>
-          )}
-        </CardActions>
-      </StyledCard>
-    </motion.div>
+              {/* Submit Button */}
+              <Box sx={{ display: "flex", justifyContent: "center", pt: 2 }}>
+                <OrangeButton
+                  onClick={handleSubmit}
+                  disabled={isLoading || !milestone || selectedStations.length === 0 || !technician || !date}
+                  startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <Add />}
+                  size="large"
+                >
+                  {isLoading ? "Assigning Tasks..." : `Assign ${selectedStations.length || 0} Task(s)`}
+                </OrangeButton>
+              </Box>
+            </Box>
+          </CardContent>
+        </StyledCard>
+      </motion.div>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </>
   )
 }
