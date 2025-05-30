@@ -5,7 +5,8 @@ import Navbar from "../components/Navbar"
 import Sidebar from "../components/Sidebar"
 import { Box, useMediaQuery, useTheme, Container } from "@mui/material"
 import ProjectList from "../components/projects/ProjectsList"
-import ProjectView from "../components/projects/ProjectView"
+import TaskAssignment from "../components/projects/TaskAssignment"
+import ProjectTaskView from "../components/projects/ProjectView"
 
 
 function Projects() {
@@ -20,9 +21,12 @@ function Projects() {
   const renderContent = () => {
      if (currentPath.includes("/projects")) {
           return <ProjectList />
-        } else if (currentPath.includes("/project/view")) {
-          return <ProjectView />
-        } 
+        } else if (currentPath.includes("/assign/task")) {
+          return <TaskAssignment />
+      } 
+      else if (currentPath.includes("/project/view")) {
+        return <ProjectTaskView />
+      } 
        
     return <ProjectList /> // Default fallback
   }

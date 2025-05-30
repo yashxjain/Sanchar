@@ -64,8 +64,10 @@ function App() {
             <Route path="/participant" element={<PrivateRoute element={Participant} />} />
             <Route path="/new-participant" element={<PrivateRoute element={Participant} />} />
             
+            
             <Route path="/projects" element={<PrivateRoute element={Projects} />} />
-            <Route path="/project/view/:ActivityId" element={<PrivateRoute element={Projects} />} />
+            <Route path="/assign/task/:ActivityId" element={<PrivateRoute element={Projects} />} />
+            <Route path="/project/view/:TenderNo" element={<PrivateRoute element={Projects} />} />
 
 
             <Route path="/menus" element={<PrivateRoute element={Menus} />} />

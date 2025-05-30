@@ -88,14 +88,15 @@ const navigate = useNavigate()
               <th>Buyer</th>
               <th>Date</th>
               <th>Tender Copy</th>
-              <th>View</th>
+              <th>Tasks</th>
+              <th>Assign</th>
             </tr>
           </thead>
           <tbody>
             {currentRecords.length > 0 ? (
               currentRecords.map((project) => (
                 <tr key={project.ActivityId}>
-                  <td>{project.TenderNo || "-"}</td>
+                  <td onClick={() => navigate(`/tender/view/${project.ActivityId}`)} style={{cursor:"pointer", fontWeight:"bold", color:"blue"}}>{project.TenderNo || "-"}</td>
                   <td>{project.BuyerName || "-"}</td>
                   <td>{formatDate(project.TenderDate)}</td>
                       <td>
@@ -113,9 +114,23 @@ const navigate = useNavigate()
                   <td>
                     <button
                       className="project-view-button"
-                      onClick={() =>  navigate(`/project/view/${project.ActivityId}`)}
+                      onClick={() =>  navigate(`/project/view/${project.TenderNo}`, {
+                        state: { tenderNo: project.TenderNo }
+                      })
+                      }
                     >
                       👁️
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className="project-view-button"
+                      onClick={() =>  navigate(`/assign/task/${project.ActivityId}`, {
+                        state: { tenderNo: project.TenderNo }
+                      })
+                      }
+                    >
+                      📝
                     </button>
                   </td>
                 </tr>
