@@ -972,7 +972,15 @@ function TempTenderView() {
               {sectionData.map((item, index) => {
                 const isImage = isImageUrl(item.Value)
                 const isPdf = isPdfUrl(item.Value)
-
+                const isPriceField = priceCheckpoints.includes(Number(item.ChkId));
+                if (isPriceField) {
+                  const field = {
+                    id: item.ChkId,
+                    label: getLabel(item.ChkId),
+                    value: item.Value
+                  };
+                  return renderPriceField(field, isEditing);
+                }
                 return (
                   <StyledFieldBox
                     key={`${item.ChkId}-${index}`}
@@ -1065,6 +1073,72 @@ function TempTenderView() {
       </div>
     )
   }
+
+  // Utility function to calculate GST (18%)
+const calculateGST = (amount) => {
+  if (!amount || isNaN(amount)) return { withGST: 0, withoutGST: 0 };
+  
+  const numAmount = parseFloat(amount.toString().replace(/,/g, ''));
+  if (isNaN(numAmount)) return { withGST: 0, withoutGST: 0 };
+  
+  return {
+    withGST: numAmount,
+    withoutGST: numAmount / 1.18, // Assuming 18% GST
+    gstAmount: numAmount - (numAmount / 1.18)
+  };
+  };
+  const renderPriceField = (field, isEditing) => {
+    const priceData = calculateGST(field.value);
+    const formattedWithGST = priceData.withGST.toLocaleString('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    
+    const formattedWithoutGST = priceData.withoutGST.toLocaleString('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    
+    const formattedGSTAmount = priceData.gstAmount.toLocaleString('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  
+    return (
+      <StyledFieldBox key={field.id} isEditing={isEditing} variant={fieldVariant}>
+        <StyledFieldLabel>
+          {getIconForField(field.label)}
+          {field.label}
+        </StyledFieldLabel>
+        {isEditing ? (
+          <StyledInput
+            value={editedData[field.id] || ""}
+            onChange={(e) => handleInputChange(field.id, e.target.value)}
+            placeholder="Enter amount with GST"
+          />
+        ) : (
+          <div>
+            <StyledFieldValue style={{ fontWeight: 'bold' }}>
+              {formattedWithGST} (Incl. GST)
+            </StyledFieldValue>
+            <StyledFieldValue style={{ fontSize: '13px', color: '#555' }}>
+              {formattedWithoutGST} (Excl. GST)
+            </StyledFieldValue>
+            <StyledFieldValue style={{ fontSize: '12px', color: '#777' }}>
+              {formattedGSTAmount} (GST Amount)
+            </StyledFieldValue>
+          </div>
+        )}
+      </StyledFieldBox>
+    );
+  };
+  const priceCheckpoints = [10, 12, 15, 17, 22, 24]; // Add more IDs as needed
 
   if (loading) {
     return <StyledLoading />

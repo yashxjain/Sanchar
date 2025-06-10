@@ -174,7 +174,7 @@ export default function TaskAssignment() {
       (task) =>
         task.Station === stationName &&
         task.MenuId.toString() === previousMilestone.value &&
-        task.Status === "Assigned",
+        task.Status === "Complete",
     )
 
     return hasPreviousPhaseCompleted

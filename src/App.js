@@ -68,6 +68,7 @@ function App() {
             <Route path="/projects" element={<PrivateRoute element={Projects} />} />
             <Route path="/assign/task/:ActivityId" element={<PrivateRoute element={Projects} />} />
             <Route path="/project/view/:TenderNo" element={<PrivateRoute element={Projects} />} />
+            <Route path="/task/view/:TaskId" element={<PrivateRoute element={Projects} />} />
 
 
             <Route path="/menus" element={<PrivateRoute element={Menus} />} />

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cricbuzz Live Matches</title>
+</head>
+<body>
+  <h1>Live Cricket Matches</h1>
+  <pre id="output">Loading...</pre>
+
+  <script>
+    const headers = {
+      "x-apihub-key": "pV-k-hvHPF0Yzpvjp8UGISR2s5GG1TabClvWG3UWODMZT3Rjm5",
+      "x-apihub-host": "Cricbuzz-Official-Cricket-API.allthingsdev.co",
+      "x-apihub-endpoint": "e0cb5c72-38e1-435e-8bf0-6b38fbe923b7"
+    };
+
+    const requestOptions = {
+      method: "GET",
+      headers: headers,
+      redirect: "follow"
+    };
+
+    fetch("https://Cricbuzz-Official-Cricket-API.proxy-production.allthingsdev.co/home", requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Network error: " + response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Live Matches:", data);
+        document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+      })
+      .catch(error => {
+        console.error("Fetch error:", error);
+        document.getElementById("output").textContent = "Error fetching data: " + error.message;
+      });
+  </script>
+</body>
+</html>

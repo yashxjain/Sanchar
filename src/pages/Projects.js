@@ -7,6 +7,7 @@ import { Box, useMediaQuery, useTheme, Container } from "@mui/material"
 import ProjectList from "../components/projects/ProjectsList"
 import TaskAssignment from "../components/projects/TaskAssignment"
 import ProjectTaskView from "../components/projects/ProjectView"
+import TaskView from "../components/projects/TaskView"
 
 
 function Projects() {
@@ -26,7 +27,10 @@ function Projects() {
       } 
       else if (currentPath.includes("/project/view")) {
         return <ProjectTaskView />
-      } 
+    } 
+    else if (currentPath.includes("/task/view")) {
+      return <TaskView />
+    } 
        
     return <ProjectList /> // Default fallback
   }

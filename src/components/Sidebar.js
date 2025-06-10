@@ -42,7 +42,8 @@ function Sidebar() {
     { path: "/buyer", name: "Buyers", icon: <Person /> },
     { path: "/directory", name: "Directory", icon: <ContactPhoneIcon /> },
     { path: "/participant", name: "Participants", icon: <Person /> },
-    // { path: "/projects", name: "Projects", icon: <AccountTreeIcon /> },
+    { path: "/projects", name: "Projects", icon: <AccountTreeIcon /> },
+    // { path: "/employees", name: "Employees", icon: <Person /> },
   ]
 
   const userModules = user?.modules || []

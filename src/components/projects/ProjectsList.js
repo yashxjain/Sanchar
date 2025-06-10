@@ -115,7 +115,10 @@ const navigate = useNavigate()
                     <button
                       className="project-view-button"
                       onClick={() =>  navigate(`/project/view/${project.TenderNo}`, {
-                        state: { tenderNo: project.TenderNo }
+                        state: {
+                          tenderNo: project.TenderNo,
+                          ActivityId: project.ActivityId
+                         }
                       })
                       }
                     >
