@@ -20,6 +20,8 @@ import { useAuth } from "./auth/AuthContext"
 import MapIcon from "@mui/icons-material/Map"
 import DynamicFormIcon from "@mui/icons-material/DynamicForm"
 import ContactPhoneIcon from "@mui/icons-material/ContactPhone"
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import BadgeIcon from '@mui/icons-material/Badge';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import HRSmileLogo from "../assets/images (1).png"
 
@@ -43,7 +45,8 @@ function Sidebar() {
     { path: "/directory", name: "Directory", icon: <ContactPhoneIcon /> },
     { path: "/participant", name: "Participants", icon: <Person /> },
     { path: "/projects", name: "Projects", icon: <AccountTreeIcon /> },
-    // { path: "/employees", name: "Employees", icon: <Person /> },
+    { path: "/employees", name: "Employees", icon: <BadgeIcon /> },
+    // { path: "/support-ticket", name: "Support Ticket", icon: <SupportAgentIcon /> },
   ]
 
   const userModules = user?.modules || []

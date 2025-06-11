@@ -215,15 +215,17 @@ export default function TaskAssignment() {
 
     // Fetch technicians
     fetch("https://namami-infotech.com/SANCHAR/src/employee/list_employee.php?Tenent_Id=1")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setTechnicians(data.data)
-        } else {
-          setTechnicians([])
-        }
-      })
-      .catch(() => setTechnicians([]))
+  .then((res) => res.json())
+  .then((data) => {
+    if (data.success) {
+      const technicians = data.data.filter(emp => emp.Role === "Technician");
+      setTechnicians(technicians);
+    } else {
+      setTechnicians([]);
+    }
+  })
+  .catch(() => setTechnicians([]));
+
 
     // Fetch existing tasks
     fetchExistingTasks()
@@ -582,7 +584,7 @@ export default function TaskAssignment() {
                               {option.Name}
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
-                              {option.Designation}
+                              {option.Role}
                             </Typography>
                           </Box>
                         </Box>

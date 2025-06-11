@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+"use client"
+
+import { useState, useEffect } from "react"
 import {
   Table,
   TableBody,
@@ -20,27 +21,33 @@ import {
   TablePagination,
   Box,
   MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-  ListItemText,
-} from "@mui/material";
-import axios from "axios";
-import EditIcon from "@mui/icons-material/Edit";
-import CloseIcon from "@mui/icons-material/Close";
-import AddIcon from "@mui/icons-material/Add";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { CheckBox } from "@mui/icons-material";
-import { useAuth } from "../auth/AuthContext";
-function EmployeeList() {
-  const { user } = useAuth();
+  Alert,
+  CircularProgress,
+} from "@mui/material"
+import EditIcon from "@mui/icons-material/Edit"
+import CloseIcon from "@mui/icons-material/Close"
+import AddIcon from "@mui/icons-material/Add"
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"
+import SearchIcon from "@mui/icons-material/Search"
 
-  const [employees, setEmployees] = useState([]);
-  const [offices, setOffices] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [openDetail, setOpenDetail] = useState(false);
-  const [openForm, setOpenForm] = useState(false);
-  const [formMode, setFormMode] = useState("add"); // 'add' or 'edit'
+// Mock auth hook - replace with your actual auth implementation
+const useAuth = () => ({
+  user: { tenent_id: "1" }, // Replace with your actual auth logic
+})
+
+function EmployeeList() {
+  const { user } = useAuth()
+
+  // State management
+  const [employees, setEmployees] = useState([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [openForm, setOpenForm] = useState(false)
+  const [formMode, setFormMode] = useState("add") // 'add' or 'edit'
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+
+  // Simplified form data - only 6 essential fields
   const [formData, setFormData] = useState({
     EmpId: "",
     Name: "",
@@ -48,84 +55,82 @@ function EmployeeList() {
     Mobile: "",
     EmailId: "",
     Role: "",
-    OTP: "",
-    IsOTPExpired: 1,
-    IsGeofence: 0,
-    Tenent_Id: "",
-    IsActive: 1,
-   
-  });
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  })
 
+  // Pagination state
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+
+  // Fetch employees on component mount
   useEffect(() => {
-    fetchEmployees();
-    fetchOffices();
-  });
+    fetchEmployees()
+  }, [])
+
+  // Clear messages after 5 seconds
+  useEffect(() => {
+    if (error || success) {
+      const timer = setTimeout(() => {
+        setError("")
+        setSuccess("")
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [error, success])
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get(
+      setLoading(true)
+      setError("")
+
+      const response = await fetch(
         `https://namami-infotech.com/SANCHAR/src/employee/list_employee.php?Tenent_Id=${user.tenent_id}`,
-      );
-      console.log("Employees response:", response.data); // Debugging line
-      if (response.data.success) {
-        setEmployees(response.data.data);
+      )
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      console.log("Employees response:", data)
+
+      if (data.success) {
+        setEmployees(data.data || [])
       } else {
-        console.error("Error fetching employees:", response.data.message);
+        setError(data.message || "Failed to fetch employees")
       }
     } catch (error) {
-      console.error("Error fetching employees:", error);
+      console.error("Error fetching employees:", error)
+      setError("Failed to fetch employees. Please try again.")
+    } finally {
+      setLoading(false)
     }
-  };
-
-  const fetchOffices = async () => {
-    try {
-      const response = await axios.get(
-        "https://namami-infotech.com/SANCHAR/src/employee/get_office.php",
-      );
-      console.log("Offices response:", response.data); // Debugging line
-      if (response.data.success) {
-        setOffices(response.data.data);
-      } else {
-        console.error("Error fetching offices:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error fetching offices:", error);
-    }
-  };
-
-  const handleCloseDetail = () => {
-    setOpenDetail(false);
-  };
+  }
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+    setPage(newPage)
+  }
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+    setRowsPerPage(Number.parseInt(event.target.value, 10))
+    setPage(0)
+  }
 
   const handleOpenForm = (mode, employee = null) => {
-    setFormMode(mode);
+    setFormMode(mode)
+    setError("")
+    setSuccess("")
+
     if (mode === "edit" && employee) {
       setFormData({
         EmpId: employee.EmpId,
         Name: employee.Name,
-        Password: "", // Assuming Password is not updated on edit
+        Password: "", // Don't populate password for security
         Mobile: employee.Mobile,
         EmailId: employee.EmailId,
         Role: employee.Role,
-        OTP: employee.OTP,
-        IsOTPExpired: employee.IsOTPExpired || 1,
-        IsGeofence: employee.IsGeofence || 0,
-        Tenent_Id: user.tenent_id,
-        IsActive: employee.IsActive || 1,
-        
-      });
+      })
     } else {
+      // Reset form for add mode
       setFormData({
         EmpId: "",
         Name: "",
@@ -133,260 +138,296 @@ function EmployeeList() {
         Mobile: "",
         EmailId: "",
         Role: "",
-        OTP: "123456",
-        IsOTPExpired: 1,
-        IsGeofence: 0,
-        Tenent_Id: user.tenent_id,
-        IsActive: 1,
-        OfficeId: "25",
-        OfficeName: "",
-        LatLong: "",
-        Distance: "",
-        OfficeIsActive: 1,
-        
-      });
+      })
     }
-    setOpenForm(true);
-  };
+    setOpenForm(true)
+  }
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  const validateForm = () => {
+    const requiredFields = ["EmpId", "Name", "Mobile", "EmailId", "Role"]
 
-    // Ensure all required fields are populated
-    const requiredFields = [
-      "EmpId",
-      "Name",
-      "Mobile",
-      "EmailId",
-      "Role",
-      "OfficeName",
-      "LatLong",
-      "Distance",
-    ];
-    for (let field of requiredFields) {
-      if (!formData[field]) {
-        alert(`Please fill in all required fields. Missing: ${field}`);
-        return;
+    // Add password requirement for new employees
+    if (formMode === "add") {
+      requiredFields.push("Password")
+    }
+
+    for (const field of requiredFields) {
+      if (!formData[field]?.trim()) {
+        setError(`Please fill in ${field.replace(/([A-Z])/g, " $1").trim()}`)
+        return false
       }
     }
 
-    const formattedFormData = {
-      EmpId: formData.EmpId,
-      Name: formData.Name,
-      Password: formData.Password,
-      Mobile: formData.Mobile,
-      EmailId: formData.EmailId,
-      Role: formData.Role,
-      OTP: formData.OTP || "123456", // Provide a default OTP if not provided
-      IsOTPExpired: formData.IsOTPExpired || 1,
-      IsGeofence: formData.IsGeofence || 0,
-      Tenent_Id: user.tenent_id,
-      IsActive: formData.IsActive || 1,
-      
-    };
+    // Validate mobile number (10 digits)
+    if (!/^\d{10}$/.test(formData.Mobile)) {
+      setError("Mobile number must be exactly 10 digits")
+      return false
+    }
 
-    console.log("Formatted Form Data:", formattedFormData); // Log formatted data
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.EmailId)) {
+      setError("Please enter a valid email address")
+      return false
+    }
+
+    return true
+  }
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
+    setLoading(true)
+    setError("")
+
+    // Prepare data with defaults for PHP backend
+    const submitData = {
+      EmpId: formData.EmpId.trim(),
+      Name: formData.Name.trim(),
+      Password: formData.Password,
+      Mobile: formData.Mobile.trim(),
+      EmailId: formData.EmailId.trim(),
+      Role: formData.Role,
+      // Default values that PHP backend expects
+      OTP: "123456",
+      IsOTPExpired: 1,
+      IsGeofence: 0,
+      Tenent_Id: user.tenent_id,
+      IsActive: 1,
+    }
+
+    console.log("Submitting data:", submitData)
 
     const url =
       formMode === "add"
         ? "https://namami-infotech.com/SANCHAR/src/employee/add_employee.php"
-        : "https://namami-infotech.com/SANCHAR/src/employee/edit_employee.php";
+        : "https://namami-infotech.com/SANCHAR/src/employee/edit_employee.php"
 
     try {
-      const response = await axios.post(url, formattedFormData);
-      console.log("Response:", response.data); // Log response data
-      alert(response.data);
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(submitData),
+      })
 
-      if (response.data.success) {
-        handleCloseForm();
-        fetchEmployees();
-      } else {
-        console.error("Error:", response.data.message);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
-      handleCloseForm();
+
+      const result = await response.json()
+      console.log("Response:", result)
+
+      if (result.success) {
+        setSuccess(`Employee ${formMode === "add" ? "added" : "updated"} successfully!`)
+        handleCloseForm()
+        fetchEmployees() // Refresh the list
+      } else {
+        setError(result.message || "Operation failed")
+      }
     } catch (error) {
-      console.error(
-        "Error:",
-        error.response ? error.response.data : error.message,
-      );
-      alert(
-        `Error: ${error.response ? error.response.data.message : error.message}`,
-      );
+      console.error("Error submitting form:", error)
+      setError("Failed to submit form. Please try again.")
+    } finally {
+      setLoading(false)
     }
-  };
-
-  const handleOfficeChange = (event) => {
-    const selectedOfficeIds = event.target.value; // Array of selected IDs
-
-    console.log("Selected Office IDs:", selectedOfficeIds); // Debugging line
-
-    // Find the selected offices' details
-    const selectedOffices = offices.filter((o) =>
-      selectedOfficeIds.includes(o.Id),
-    );
-
-    console.log("Selected Offices:", selectedOffices); // Debugging line
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      OfficeId: selectedOfficeIds.join(","), // Store IDs as comma-separated string
-      OfficeName: selectedOffices.map((o) => o.OfficeName).join(","), // Store names as comma-separated string
-      LatLong: selectedOffices.map((o) => o.LatLong).join("|"), // Store lat-long as a pipe-separated string
-      Distance: selectedOffices.map((o) => o.Distance).join(","), // Store distances as comma-separated string
-    }));
-  };
+  }
 
   const handleCloseForm = () => {
-    setOpenForm(false);
-  };
+    setOpenForm(false)
+    setFormData({
+      EmpId: "",
+      Name: "",
+      Password: "",
+      Mobile: "",
+      EmailId: "",
+      Role: "",
+    })
+  }
 
   const handleToggleEmployeeStatus = async (employee) => {
-    if (!employee || !employee.EmpId) {
-      console.error("Please provide both Employee ID and action");
-      return;
+    if (!employee?.EmpId) {
+      setError("Invalid employee data")
+      return
     }
+
+    setLoading(true)
+    setError("")
 
     try {
-      const action = employee.IsActive ? "disable" : "enable";
-      const response = await axios.post(
-        "https://namami-infotech.com/SANCHAR/src/employee/disable_employee.php",
-        {
+      const action = employee.IsActive ? "disable" : "enable"
+
+      const response = await fetch("https://namami-infotech.com/SANCHAR/src/employee/disable_employee.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           EmpId: employee.EmpId,
           action: action,
-        },
-      );
+        }),
+      })
 
-      if (response.data.success) {
-        fetchEmployees(); // Refresh the employee list after the update
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+
+      if (result.success) {
+        setSuccess(`Employee ${action}d successfully!`)
+        fetchEmployees() // Refresh the list
       } else {
-        console.error("Error:", response.data.message);
+        setError(result.message || "Failed to update employee status")
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error toggling status:", error)
+      setError("Failed to update employee status")
+    } finally {
+      setLoading(false)
     }
-  };
+  }
 
+  // Filter employees based on search term
   const filteredEmployees = employees.filter((employee) => {
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    const lowerCaseSearchTerm = searchTerm.toLowerCase()
     return Object.keys(employee).some((key) => {
-      const value = employee[key];
-      return (
-        value != null &&
-        value.toString().toLowerCase().includes(lowerCaseSearchTerm)
-      );
-    });
-  });
+      const value = employee[key]
+      return value != null && value.toString().toLowerCase().includes(lowerCaseSearchTerm)
+    })
+  })
 
   return (
-    <div>
-      <Grid container spacing={2} alignItems="center">
+    <div style={{ padding: "20px" }}>
+      {/* Alert Messages */}
+      {error && (
+        <Alert severity="error" style={{ marginBottom: "16px" }} onClose={() => setError("")}>
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert severity="success" style={{ marginBottom: "16px" }} onClose={() => setSuccess("")}>
+          {success}
+        </Alert>
+      )}
+
+      {/* Header Section */}
+      <Grid container spacing={2} alignItems="center" style={{ marginBottom: "20px" }}>
         <Grid item xs={12} md={8}>
           <TextField
             fullWidth
             variant="outlined"
-            placeholder="Search Employee"
-            margin="normal"
+            placeholder="Search employees..."
+            value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: <SearchIcon style={{ marginRight: "8px", color: "#666" }} />,
+            }}
           />
         </Grid>
-        <Grid item xs={12} md={4} sx={{ textAlign: "right" }}>
+        <Grid item xs={12} md={4} style={{ textAlign: "right" }}>
           <Button
             variant="contained"
-            color="primary"
-            style={{ backgroundColor: "#F69320" }}
+            style={{ backgroundColor: "#F69320", color: "white" }}
             startIcon={<AddIcon />}
             onClick={() => handleOpenForm("add")}
+            disabled={loading}
           >
             Add Employee
           </Button>
         </Grid>
       </Grid>
-      <Box sx={{ overflowX: "auto", mt: 2 }}>
+
+      {/* Employee Table */}
+      <Box sx={{ overflowX: "auto" }}>
         <TableContainer component={Paper}>
           <Table>
             <TableHead style={{ backgroundColor: "#F69320" }}>
               <TableRow>
-                <TableCell style={{ color: "white" }}>EmpID</TableCell>
-                <TableCell style={{ color: "white" }}>Name</TableCell>
-                <TableCell style={{ color: "white" }}>Mobile</TableCell>
-                <TableCell style={{ color: "white" }}>Email</TableCell>
-                <TableCell style={{ color: "white" }}>Role</TableCell>
-                {/* <TableCell style={{ color: "white" }}>RM</TableCell> */}
-                {/* <TableCell style={{ color: "white" }}>Shift</TableCell> */}
-                <TableCell style={{ color: "white" }}>Status</TableCell>
-                <TableCell style={{ color: "white" }}>Actions</TableCell>
+                <TableCell style={{ color: "white", fontWeight: "bold" }}>Employee ID</TableCell>
+                <TableCell style={{ color: "white", fontWeight: "bold" }}>Name</TableCell>
+                <TableCell style={{ color: "white", fontWeight: "bold" }}>Mobile</TableCell>
+                <TableCell style={{ color: "white", fontWeight: "bold" }}>Email</TableCell>
+                <TableCell style={{ color: "white", fontWeight: "bold" }}>Role</TableCell>
+                <TableCell style={{ color: "white", fontWeight: "bold" }}>Status</TableCell>
+                <TableCell style={{ color: "white", fontWeight: "bold" }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredEmployees
-                .sort((a, b) => a.Name.localeCompare(b.Name))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((employee) => (
-                  <TableRow key={employee.EmpId}>
-                    <TableCell
-                      
-                      style={{ textDecoration: "none" }}
-                    >
-                      {employee.EmpId}
-                    </TableCell>
-
-                    <TableCell
-                      
-                      style={{ textDecoration: "none" }}
-                    >
-                      {employee.Name}
-                    </TableCell>
-                    <TableCell
-                     
-                      style={{ textDecoration: "none" }}
-                    >
-                      {employee.Mobile}
-                    </TableCell>
-                    <TableCell
-                      
-                      style={{ textDecoration: "none" }}
-                    >
-                      {employee.EmailId}
-                    </TableCell>
-                    <TableCell
-                     
-                      style={{ textDecoration: "none" }}
-                    >
-                      {employee.Role}
-                    </TableCell>
-                    {/* <TableCell>{employee.RM}</TableCell> */}
-                    {/* <TableCell>{employee.Shift}</TableCell> */}
-                    <TableCell>
-                      <Typography
-                        variant="body2"
-                        color={employee.IsActive ? "green" : "red"}
-                      >
-                        {employee.IsActive ? "Active" : "Inactive"}
-                      </Typography>
-                    </TableCell>
-                    <TableCell style={{ display: "flex" }}>
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleOpenForm("edit", employee)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        color={employee.IsActive ? "error" : "success"}
-                        onClick={() => handleToggleEmployeeStatus(employee)}
-                      >
-                        {employee.IsActive ? (
-                          <CloseIcon />
-                        ) : (
-                          <CheckCircleIcon />
-                        )}
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={7} style={{ textAlign: "center", padding: "40px" }}>
+                    <CircularProgress />
+                    <Typography variant="body2" style={{ marginTop: "10px" }}>
+                      Loading employees...
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : filteredEmployees.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} style={{ textAlign: "center", padding: "40px" }}>
+                    <Typography variant="body1" color="textSecondary">
+                      No employees found
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredEmployees
+                  .sort((a, b) => a.Name.localeCompare(b.Name))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((employee) => (
+                    <TableRow key={employee.EmpId} hover>
+                      <TableCell style={{ fontWeight: "500" }}>{employee.EmpId}</TableCell>
+                      <TableCell>{employee.Name}</TableCell>
+                      <TableCell>{employee.Mobile}</TableCell>
+                      <TableCell>{employee.EmailId}</TableCell>
+                      <TableCell>{employee.Role}</TableCell>
+                      <TableCell>
+                        <Typography
+                          variant="body2"
+                          style={{
+                            color: employee.IsActive ? "#4caf50" : "#f44336",
+                            fontWeight: "500",
+                          }}
+                        >
+                          {employee.IsActive ? "Active" : "Inactive"}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          <IconButton
+                            color="primary"
+                            onClick={() => handleOpenForm("edit", employee)}
+                            disabled={loading}
+                            title="Edit Employee"
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            style={{
+                              color: employee.IsActive ? "#f44336" : "#4caf50",
+                            }}
+                            onClick={() => handleToggleEmployeeStatus(employee)}
+                            disabled={loading}
+                            title={employee.IsActive ? "Disable Employee" : "Enable Employee"}
+                          >
+                            {employee.IsActive ? <CloseIcon /> : <CheckCircleIcon />}
+                          </IconButton>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
+
+        {/* Pagination */}
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
@@ -397,88 +438,81 @@ function EmployeeList() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Box>
-      <Dialog open={openForm} onClose={handleCloseForm}>
-        <DialogTitle>
-          {formMode === "add" ? "Add Employee" : "Edit Employee"}
-        </DialogTitle>
 
-        <DialogContent>
-          <form onSubmit={handleFormSubmit} style={{ marginTop: "10px" }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+      {/* Add/Edit Employee Dialog */}
+      <Dialog open={openForm} onClose={handleCloseForm} maxWidth="md" fullWidth>
+        <DialogTitle style={{ backgroundColor: "#f5f5f5" }}>
+          {formMode === "add" ? "Add New Employee" : "Edit Employee"}
+        </DialogTitle>
+        <DialogContent style={{ paddingTop: "20px" }}>
+          <form onSubmit={handleFormSubmit}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
                   label="Employee ID"
                   value={formData.EmpId}
-                  onChange={(e) =>
-                    setFormData({ ...formData, EmpId: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, EmpId: e.target.value })}
                   required
                   disabled={formMode === "edit"}
+                  helperText={formMode === "edit" ? "Employee ID cannot be changed" : ""}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Name"
+                  label="Full Name"
                   value={formData.Name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, Name: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, Name: e.target.value })}
                   required
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              {formMode === "add" && (
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    type="password"
+                    value={formData.Password}
+                    onChange={(e) => setFormData({ ...formData, Password: e.target.value })}
+                    required
+                    helperText="Minimum 6 characters recommended"
+                  />
+                </Grid>
+              )}
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Password"
-                  type="password"
-                  value={formData.Password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, Password: e.target.value })
-                  }
-                  required
-                  disabled={formMode === "edit"}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  fullWidth
-                  label="Mobile"
+                  label="Mobile Number"
                   value={formData.Mobile}
                   onChange={(e) => {
-                    const value = e.target.value;
+                    const value = e.target.value.replace(/\D/g, "") // Only allow digits
                     if (value.length <= 10) {
-                      setFormData({ ...formData, Mobile: value });
+                      setFormData({ ...formData, Mobile: value })
                     }
                   }}
                   required
-                  type="number"
+                  helperText="10 digits only"
                   inputProps={{ maxLength: 10 }}
                 />
               </Grid>
-
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Email"
+                  label="Email Address"
                   type="email"
                   value={formData.EmailId}
-                  onChange={(e) =>
-                    setFormData({ ...formData, EmailId: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, EmailId: e.target.value })}
                   required
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   select
                   fullWidth
                   label="Role"
                   value={formData.Role}
-                  onChange={(e) =>
-                    setFormData({ ...formData, Role: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, Role: e.target.value })}
                   required
                 >
                   <MenuItem value="Admin">Admin</MenuItem>
@@ -488,28 +522,24 @@ function EmployeeList() {
                 </TextField>
               </Grid>
             </Grid>
-            <DialogActions>
-              <Button onClick={handleCloseForm} color="primary">
-                Cancel
-              </Button>
-              <Button type="submit" color="primary">
-                Submit
-              </Button>
-            </DialogActions>
           </form>
         </DialogContent>
-      </Dialog>
-      <Dialog open={openDetail} onClose={handleCloseDetail}>
-        <DialogTitle>Employee Details</DialogTitle>
-        <DialogContent>{/* You can add employee details here */}</DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDetail} color="primary">
-            Close
+        <DialogActions style={{ padding: "16px 24px" }}>
+          <Button onClick={handleCloseForm} disabled={loading}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleFormSubmit}
+            variant="contained"
+            style={{ backgroundColor: "#F69320", color: "white" }}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={20} /> : formMode === "add" ? "Add Employee" : "Update Employee"}
           </Button>
         </DialogActions>
       </Dialog>
     </div>
-  );
+  )
 }
 
-export default EmployeeList;
+export default EmployeeList

@@ -21,6 +21,7 @@ import Participant from './pages/Participant';
 import User from './pages/User';
 import ViewLOA from './pages/ViewLOA';
 import Projects from './pages/Projects';
+import Ticket from './pages/Ticket';
 function App() {
    useEffect(() => {
         const handleRightClick = (event) => {
@@ -70,6 +71,9 @@ function App() {
             <Route path="/project/view/:TenderNo" element={<PrivateRoute element={Projects} />} />
             <Route path="/task/view/:TaskId" element={<PrivateRoute element={Projects} />} />
 
+
+            <Route path="/support-ticket" element={<PrivateRoute element={Ticket} />} />
+            
 
             <Route path="/menus" element={<PrivateRoute element={Menus} />} />
             <Route path="/add-menu" element={<PrivateRoute element={Menus} />} />
